@@ -572,57 +572,28 @@
 
     function launchGame(zone) {
       currentZone = zone;
+
       var url = zone.url
         ? zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
         : "";
 
-      // Show modal immediately with a loading state
       document.getElementById("modal-game-title").textContent = zone.name;
       document.getElementById("game-modal").classList.add("open");
       document.body.style.overflow = "hidden";
-
-      var frame = document.getElementById("game-frame");
-      frame.src = "";
-
-      if (zone.url && zone.url.startsWith("http")) {
-        // External URL — just set src directly
-        frame.src = url;
-      } else {
-        // CDN-hosted HTML — fetch the raw HTML and write it into the iframe
-        fetch(url + "?t=" + Date.now())
-          .then(function(res) { return res.text(); })
-          .then(function(html) {
-            frame.contentDocument.open();
-            frame.contentDocument.write(html);
-            frame.contentDocument.close();
-            // Re-run any scripts inside (some games need this)
-            frame.contentDocument.querySelectorAll("script").forEach(function(old) {
-              var s = document.createElement("script");
-              if (old.src) { s.src = old.src; } else { s.textContent = old.textContent; }
-              frame.contentDocument.body.appendChild(s);
-            });
-          })
-          .catch(function(err) {
-            frame.contentDocument.open();
-            frame.contentDocument.write("<body style='background:#0d0d0f;color:#888;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-size:1rem;'>Failed to load game.</body>");
-            frame.contentDocument.close();
-          });
-      }
+      document.getElementById("game-frame").src = url;
     }
 
     function closeModal() {
       document.getElementById("game-modal").classList.remove("open");
-      var frame = document.getElementById("game-frame");
-      frame.src = "";
-      try { frame.contentDocument.open(); frame.contentDocument.write(""); frame.contentDocument.close(); } catch(e) {}
+      document.getElementById("game-frame").src = "";
       document.body.style.overflow = "";
-      currentZone = null;
     }
 
-    var currentZone = null;
-
     function reloadGame() {
-      if (currentZone) { launchGame(currentZone); }
+      var f = document.getElementById("game-frame");
+      var src = f.src;
+      f.src = "";
+      f.src = src;
     }
 
     function openFullscreen() {
