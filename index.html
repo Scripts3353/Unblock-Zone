@@ -501,7 +501,6 @@
     ];
 
     var allZones = [];
-    var currentUrl = null;
 
     async function loadGames() {
       var grid = document.getElementById("game-grid");
@@ -556,7 +555,7 @@
           '</div>' +
           '<div class="card-info">' +
             '<div class="card-name">' + zone.name + '</div>' +
-            '<div class="card-tag">' + (zone.author || 'Game') + '</div>' +
+            '<div class="card-tag">UnblockZone</div>' +
           '</div>';
 
         grid.appendChild(card);
@@ -572,36 +571,58 @@
     }
 
     function launchGame(zone) {
-      if (zone.url && zone.url.startsWith("http")) {
-        // External URL — open in modal via iframe
-        openModal(zone.url, zone.name);
-      } else {
-        // Hosted HTML file — fetch and write into iframe
-        var url = zone.url
-          ? zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
-          : "";
-        currentUrl = url;
-        openModal(url, zone.name);
-      }
-    }
+      currentZone = zone;
+      var url = zone.url
+        ? zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
+        : "";
 
-    function openModal(url, name) {
-      document.getElementById("modal-game-title").textContent = name;
-      document.getElementById("game-frame").src = url;
+      // Show modal immediately with a loading state
+      document.getElementById("modal-game-title").textContent = zone.name;
       document.getElementById("game-modal").classList.add("open");
       document.body.style.overflow = "hidden";
+
+      var frame = document.getElementById("game-frame");
+      frame.src = "";
+
+      if (zone.url && zone.url.startsWith("http")) {
+        // External URL — just set src directly
+        frame.src = url;
+      } else {
+        // CDN-hosted HTML — fetch the raw HTML and write it into the iframe
+        fetch(url + "?t=" + Date.now())
+          .then(function(res) { return res.text(); })
+          .then(function(html) {
+            frame.contentDocument.open();
+            frame.contentDocument.write(html);
+            frame.contentDocument.close();
+            // Re-run any scripts inside (some games need this)
+            frame.contentDocument.querySelectorAll("script").forEach(function(old) {
+              var s = document.createElement("script");
+              if (old.src) { s.src = old.src; } else { s.textContent = old.textContent; }
+              frame.contentDocument.body.appendChild(s);
+            });
+          })
+          .catch(function(err) {
+            frame.contentDocument.open();
+            frame.contentDocument.write("<body style='background:#0d0d0f;color:#888;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-size:1rem;'>Failed to load game.</body>");
+            frame.contentDocument.close();
+          });
+      }
     }
 
     function closeModal() {
       document.getElementById("game-modal").classList.remove("open");
-      document.getElementById("game-frame").src = "";
+      var frame = document.getElementById("game-frame");
+      frame.src = "";
+      try { frame.contentDocument.open(); frame.contentDocument.write(""); frame.contentDocument.close(); } catch(e) {}
       document.body.style.overflow = "";
-      currentUrl = null;
+      currentZone = null;
     }
 
+    var currentZone = null;
+
     function reloadGame() {
-      var f = document.getElementById("game-frame");
-      f.src = f.src;
+      if (currentZone) { launchGame(currentZone); }
     }
 
     function openFullscreen() {
