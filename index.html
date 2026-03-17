@@ -1304,6 +1304,22 @@
     })();
 
     function revealSite() {
+      // If we're already inside an about:blank iframe, just hide the article
+      if (window.location.href !== 'about:blank' && window !== window.top) {
+        document.getElementById("article-disguise").classList.add("gone");
+        return;
+      }
+      // If we're the top-level page on the real URL, open about:blank with us inside
+      if (window.location.href !== 'about:blank') {
+        var w = window.open("about:blank", "_blank");
+        if (!w) { document.getElementById("article-disguise").classList.add("gone"); return; }
+        var realUrl = location.href;
+        w.document.open();
+        w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>UnblockZone</title><style>*{margin:0;padding:0}html,body,iframe{width:100%;height:100%;border:none;display:block;overflow:hidden;background:#0d0d0f}</style></head><body><iframe src="' + realUrl + '" allowfullscreen></iframe></body></html>');
+        w.document.close();
+        return;
+      }
+      // Already on about:blank — just reveal
       document.getElementById("article-disguise").classList.add("gone");
     }
 
