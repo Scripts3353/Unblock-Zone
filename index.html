@@ -732,6 +732,127 @@
     .seg-control button.active { background: var(--accent); color: #000; }
     .seg-control button:not(.active):hover { background: var(--card-hover); color: var(--text); }
 
+    /* ── ARTICLE DISGUISE ── */
+    #article-disguise {
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      background: #fff;
+      overflow-y: auto;
+      cursor: default;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #1a1a1a;
+    }
+    #article-disguise.gone { display: none; }
+    .article-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .article-site-name {
+      font-family: 'Times New Roman', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+    .article-nav {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: #555;
+    }
+    .article-nav span { cursor: pointer; }
+    .article-nav span:hover { text-decoration: underline; }
+    .article-body {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .article-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #c00;
+      margin-bottom: 0.6rem;
+    }
+    .article-headline {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+      color: #111;
+    }
+    .article-deck {
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+      border-left: 3px solid #ccc;
+      padding-left: 0.9rem;
+    }
+    .article-meta {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .article-meta strong { color: #555; }
+    .article-img {
+      width: 100%;
+      height: 320px;
+      background: #e8e8e8;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 0.8rem;
+      font-family: sans-serif;
+      border: 1px solid #ddd;
+    }
+    .article-caption {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .article-p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #222;
+      margin-bottom: 1.2rem;
+    }
+    .article-h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 2rem 0 0.6rem;
+      color: #111;
+    }
+    .article-click-hint {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      opacity: 0.7;
+      pointer-events: none;
+      animation: fadeIn 1s ease 1.5s both;
+    }
+
     @media (max-width: 768px) {
       header { padding: 0 1rem; }
       .logo { font-size: 1.2rem; }
@@ -741,6 +862,7 @@
       .footer-links { display: none; }
       #settings-overlay { padding: 74px 0.8rem 0.8rem; }
       .settings-panel { max-width: 100%; }
+      .article-headline { font-size: 1.4rem; }
     }
     @media (max-width: 480px) {
       .game-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; }
@@ -749,6 +871,45 @@
   </style>
 </head>
 <body>
+
+  <!-- ARTICLE DISGUISE — click anywhere to open real site in about:blank -->
+  <div id="article-disguise" onclick="revealSite()">
+    <div class="article-topbar">
+      <div class="article-site-name">The Daily Tribune</div>
+      <div class="article-nav">
+        <span>World</span><span>Science</span><span>Technology</span><span>Education</span><span>Opinion</span>
+      </div>
+    </div>
+    <div class="article-body">
+      <div class="article-kicker">Education &amp; Technology</div>
+      <h1 class="article-headline">How Schools Are Rethinking Digital Learning Tools in the Age of AI</h1>
+      <div class="article-deck">Educators and administrators debate the role of online platforms in modern classrooms, as student engagement with interactive tools reaches an all-time high.</div>
+      <div class="article-meta">
+        By <strong>Margaret L. Hoffman</strong> &nbsp;|&nbsp; Staff Writer &nbsp;|&nbsp;
+        <span id="article-date"></span> &nbsp;|&nbsp; 6 min read
+      </div>
+      <div class="article-img">[Photo: Students working on laptops in a modern classroom]</div>
+      <div class="article-caption">Students at Jefferson Middle School use district-approved platforms during a free-study period. (File photo)</div>
+      <p class="article-p">Across the country, school districts are grappling with a fundamental question: how much screen time is too much, and what kinds of digital tools actually improve learning outcomes? A new wave of research suggests the answer is more nuanced than policymakers once believed.</p>
+      <p class="article-p">For years, the dominant narrative held that smartphones and internet access in schools were distractions — obstacles to concentration and academic achievement. But a series of longitudinal studies conducted between 2021 and 2024 tells a more complicated story.</p>
+      <h2 class="article-h2">Engagement Through Interaction</h2>
+      <p class="article-p">"What we're seeing is that passive consumption — watching videos, scrolling feeds — does correlate with lower test scores," said Dr. Priya Anand, a researcher at the Stanford Center for Education Policy. "But active, goal-directed use of digital platforms, including educational games and interactive simulations, shows a neutral to positive effect in most cohorts we've studied."</p>
+      <p class="article-p">The distinction matters because many school filtering systems treat all recreational online activity as equally harmful, blocking platforms that students and some teachers argue have genuine pedagogical value. Meanwhile, social media platforms that research has more consistently linked to distraction often slip through filters by presenting themselves as communication tools.</p>
+      <h2 class="article-h2">The Filter Problem</h2>
+      <p class="article-p">Network filtering software — products like GoGuardian, Securly, and Lightspeed — now operate in the majority of U.S. public school districts. These tools monitor student browsing in real time, flagging or blocking content deemed inappropriate or off-task.</p>
+      <p class="article-p">Critics argue the systems are blunt instruments. "We blocked a geography quiz platform for three weeks because the word 'game' appeared in the URL," recalled one IT administrator in Ohio, who asked not to be named to avoid workplace conflict. "Meanwhile students were on YouTube watching music videos the whole time."</p>
+      <p class="article-p">Proponents of strict filtering counter that without such safeguards, teachers lose precious instructional time to off-task behavior, and younger students may be exposed to content that isn't age appropriate.</p>
+      <h2 class="article-h2">What Students Say</h2>
+      <p class="article-p">A survey of over 4,000 middle and high school students conducted by the nonprofit Digital Futures Initiative found that 71 percent felt their school's internet restrictions made it harder to complete legitimate research assignments. At the same time, 63 percent admitted they regularly found ways around those restrictions.</p>
+      <p class="article-p">"It's kind of a game in itself," said one 14-year-old student in suburban Atlanta, who spoke on condition of anonymity. "The school blocks something, kids figure out how to get around it. It's been like that forever."</p>
+      <p class="article-p">That cat-and-mouse dynamic frustrates both sides. Administrators invest significant resources in filtering infrastructure only to find students adapting quickly. Students, for their part, spend time and energy circumventing systems rather than engaging with schoolwork.</p>
+      <h2 class="article-h2">Looking Ahead</h2>
+      <p class="article-p">Some districts are experimenting with a different approach: rather than blanket restrictions, they are developing tiered access systems that expand browsing privileges based on grade level, time of day, and classroom context. Early results from pilot programs in Colorado and Minnesota suggest the approach reduces both over-blocking and off-task browsing.</p>
+      <p class="article-p">"The goal was never to build a wall," said one district technology coordinator involved in the pilot. "The goal is to build a culture where students make good choices. That takes trust, and trust has to go both ways."</p>
+      <p class="article-p">Whether that philosophy spreads to other districts remains to be seen. For now, the debate continues — in school board meetings, in IT departments, and in the quiet corners of school libraries where students have always found ways to read whatever they wanted.</p>
+    </div>
+    <div class="article-click-hint">Click anywhere to continue</div>
+  </div>
 
   <!-- LOGIN OVERLAY -->
   <div id="login-overlay">
@@ -1040,20 +1201,32 @@
       }));
     }
 
-    // Strip gn-math promo banners from game HTML before rendering
+    // Strip gn-math promo banners — both static and dynamically injected ones
     function stripPromos(html) {
-      // Remove any <div> or <a> tags that contain gn-math promo text or discord links
-      var promoPatterns = [
-        // The "SUGGEST GAMES" and "COMMENTS" popup divs
-        /<div[^>]*>[\s\S]*?(?:SUGGEST GAMES|COMMENTS|\.gg\/|discord\.gg|gn-math|Play more games at)[\s\S]*?<\/div>/gi,
-        // Standalone anchor tags linking to discord/gn-math
-        /<a[^>]*(?:discord\.gg|gn-math\.github)[\s\S]*?<\/a>/gi,
-        // Script tags that create/append those popup elements
-        /<script[^>]*>[\s\S]*?(?:SUGGEST GAMES|COMMENTS|\.gg\/D4c9|gn-math\.github\.io)[\s\S]*?<\/script>/gi,
-      ];
-      promoPatterns.forEach(function(pattern) {
-        html = html.replace(pattern, '');
-      });
+      // 1. Remove static script blocks that create the popups
+      html = html.replace(/<script[^>]*>[\s\S]*?(?:SUGGEST GAMES|COMMENTS|\.gg\/|gn-math\.github\.io|Play more games)[\s\S]*?<\/script>/gi, '');
+      // 2. Remove static popup divs/anchors
+      html = html.replace(/<div[^>]*>[\s\S]{0,300}?(?:SUGGEST GAMES|COMMENTS|discord\.gg|gn-math)[\s\S]{0,300}?<\/div>/gi, '');
+      html = html.replace(/<a[^>]*(?:discord\.gg|gn-math\.github)[^>]*>[\s\S]*?<\/a>/gi, '');
+      // 3. Inject a MutationObserver before </body> that removes any promo elements added at runtime
+      var observer = '<script>' +
+        '(function(){' +
+        'var KILL=["discord.gg","gn-math","SUGGEST GAMES","COMMENTS","Play more games"];' +
+        'function clean(n){' +
+        '  if(!n||n.nodeType!==1)return;' +
+        '  var t=(n.innerText||"")+(n.href||"")+(n.src||"");' +
+        '  if(KILL.some(function(k){return t.includes(k);})){n.remove();return;}' +
+        '  n.querySelectorAll("*").forEach(function(c){' +
+        '    var ct=(c.innerText||"")+(c.href||"");' +
+        '    if(KILL.some(function(k){return ct.includes(k);}))c.remove();' +
+        '  });' +
+        '}' +
+        'var obs=new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(clean);});});' +
+        'obs.observe(document.documentElement,{childList:true,subtree:true});' +
+        'clean(document.body);' +
+        '})();' +
+        '<\/script>';
+      html = html.replace(/<\/body>/i, observer + '</body>');
       return html;
     }
 
@@ -1118,6 +1291,40 @@
     document.addEventListener("keydown", function(e) {
       if (e.key === "Escape") closeModal();
     });
+
+    // ── ARTICLE DISGUISE ──
+    // Set today's date on the article
+    (function() {
+      var el = document.getElementById("article-date");
+      if (el) {
+        var d = new Date();
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        el.textContent = months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+      }
+    })();
+
+    function revealSite() {
+      var w = window.open("about:blank", "_blank");
+      if (!w) {
+        // Popup blocked — just hide the disguise instead
+        document.getElementById("article-disguise").classList.add("gone");
+        return;
+      }
+      w.document.open();
+      w.document.write(
+        '<!DOCTYPE html><html><head>' +
+        '<meta charset="UTF-8"/>' +
+        '<meta name="viewport" content="width=device-width,initial-scale=1"/>' +
+        '<title>UnblockZone</title>' +
+        '<style>*{margin:0;padding:0}html,body,iframe{width:100%;height:100%;border:none;display:block;overflow:hidden;background:#0d0d0f}</style>' +
+        '</head><body>' +
+        '<iframe src="' + location.href + '" allowfullscreen></iframe>' +
+        '</body></html>'
+      );
+      w.document.close();
+      // Hide disguise in original tab too
+      document.getElementById("article-disguise").classList.add("gone");
+    }
 
     // ── SETTINGS ──
     function openSettings() {
