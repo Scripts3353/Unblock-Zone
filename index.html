@@ -570,9 +570,10 @@
       }));
     }
 
+    var currentZone = null;
+
     function launchGame(zone) {
       currentZone = zone;
-
       var url = zone.url
         ? zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
         : "";
@@ -580,20 +581,39 @@
       document.getElementById("modal-game-title").textContent = zone.name;
       document.getElementById("game-modal").classList.add("open");
       document.body.style.overflow = "hidden";
-      document.getElementById("game-frame").src = url;
+
+      var frame = document.getElementById("game-frame");
+      frame.src = "";
+
+      if (!url) return;
+
+      // Fetch the HTML and create a blob so the browser renders it correctly
+      fetch(url)
+        .then(function(res) { return res.text(); })
+        .then(function(html) {
+          var blob = new Blob([html], { type: "text/html" });
+          var blobUrl = URL.createObjectURL(blob);
+          // Revoke the previous blob if any
+          if (frame._blobUrl) URL.revokeObjectURL(frame._blobUrl);
+          frame._blobUrl = blobUrl;
+          frame.src = blobUrl;
+        })
+        .catch(function() {
+          frame.src = url; // fallback — try direct
+        });
     }
 
     function closeModal() {
       document.getElementById("game-modal").classList.remove("open");
-      document.getElementById("game-frame").src = "";
+      var frame = document.getElementById("game-frame");
+      if (frame._blobUrl) { URL.revokeObjectURL(frame._blobUrl); frame._blobUrl = null; }
+      frame.src = "";
       document.body.style.overflow = "";
+      currentZone = null;
     }
 
     function reloadGame() {
-      var f = document.getElementById("game-frame");
-      var src = f.src;
-      f.src = "";
-      f.src = src;
+      if (currentZone) launchGame(currentZone);
     }
 
     function openFullscreen() {
