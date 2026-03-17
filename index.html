@@ -44,6 +44,133 @@
       z-index: 0;
     }
 
+    /* ── LOGIN OVERLAY ── */
+    #login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    #login-overlay.hidden { display: none; }
+
+    .login-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2.5rem 2rem;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,229,255,0.07);
+      animation: slideUp 0.25s ease;
+    }
+
+    .login-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #00e5ff 0%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+    .login-logo span { color: #fff; -webkit-text-fill-color: #fff; }
+
+    .login-subtitle {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      letter-spacing: 0.04em;
+    }
+
+    .login-field {
+      margin-bottom: 1rem;
+    }
+    .login-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+    .login-field input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-field input:focus {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .login-error {
+      font-size: 0.82rem;
+      color: #ff4d6d;
+      text-align: center;
+      min-height: 1.2rem;
+      margin-bottom: 0.8rem;
+      display: none;
+    }
+    .login-error.show { display: block; animation: shake 0.3s ease; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #00e5ff, #7c3aed);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+    .login-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* spinner inside button */
+    .login-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .login-btn.loading .login-spinner { display: block; }
+    .login-btn.loading .login-btn-text { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* ── NOTICE OVERLAY ── */
     #notice-overlay {
       position: fixed;
@@ -414,6 +541,27 @@
 </head>
 <body>
 
+  <!-- LOGIN OVERLAY -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <div class="login-logo">Unblock<span>Zone</span></div>
+      <div class="login-subtitle">Enter your credentials to continue</div>
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">
+        <span class="login-btn-text">Sign In</span>
+        <div class="login-spinner"></div>
+      </button>
+    </div>
+  </div>
+
   <!-- NOTICE OVERLAY -->
   <div id="notice-overlay">
     <div class="notice-box">
@@ -486,6 +634,31 @@
   </div>
 
   <script>
+    // ── LOGIN ──
+    function doLogin() {
+      var user = document.getElementById("login-user").value;
+      var pass = document.getElementById("login-pass").value;
+      var err  = document.getElementById("login-error");
+      var btn  = document.getElementById("login-btn");
+
+      err.classList.remove("show");
+
+      if (user === "123" && pass === "123") {
+        // Show loading state
+        btn.classList.add("loading");
+        btn.disabled = true;
+        setTimeout(function() {
+          document.getElementById("login-overlay").classList.add("hidden");
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }, 2000);
+      } else {
+        err.classList.add("show");
+        document.getElementById("login-pass").value = "";
+        document.getElementById("login-pass").focus();
+      }
+    }
+
     // ── NOTICE ──
     function dismissNotice() {
       document.getElementById("notice-overlay").classList.add("hidden");
@@ -502,6 +675,19 @@
 
     var allZones = [];
 
+    // ── BLOCKLIST ──
+    // Any game whose name contains one of these words (case-insensitive) will be hidden.
+    // Add more terms to the list as needed.
+    var BLOCKED_TERMS = [
+      "epstein", "jeffrey", "porn", "hentai", "sex", "nude", "nsfw",
+      "xxx", "naked", "adult", "[!] COMMENTS", "[!] SUGGEST GAMES"
+    ];
+
+    function isBlocked(name) {
+      var lower = name.toLowerCase();
+      return BLOCKED_TERMS.some(function(term) { return lower.includes(term); });
+    }
+
     async function loadGames() {
       var grid = document.getElementById("game-grid");
       try {
@@ -515,8 +701,8 @@
         }
         if (!json) throw new Error("All URLs failed");
 
-        allZones = json;
-        // Sort alphabetically by default
+        // Filter out blocked games then sort alphabetically
+        allZones = json.filter(function(z) { return !isBlocked(z.name); });
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
       } catch(e) {
