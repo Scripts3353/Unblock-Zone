@@ -1304,25 +1304,6 @@
     })();
 
     function revealSite() {
-      var w = window.open("about:blank", "_blank");
-      if (!w) {
-        // Popup blocked — just hide the disguise instead
-        document.getElementById("article-disguise").classList.add("gone");
-        return;
-      }
-      w.document.open();
-      w.document.write(
-        '<!DOCTYPE html><html><head>' +
-        '<meta charset="UTF-8"/>' +
-        '<meta name="viewport" content="width=device-width,initial-scale=1"/>' +
-        '<title>UnblockZone</title>' +
-        '<style>*{margin:0;padding:0}html,body,iframe{width:100%;height:100%;border:none;display:block;overflow:hidden;background:#0d0d0f}</style>' +
-        '</head><body>' +
-        '<iframe src="' + location.href + '" allowfullscreen></iframe>' +
-        '</body></html>'
-      );
-      w.document.close();
-      // Hide disguise in original tab too
       document.getElementById("article-disguise").classList.add("gone");
     }
 
