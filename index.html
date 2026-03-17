@@ -525,6 +525,213 @@
     @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
     @keyframes slideUp { from { transform: translateY(16px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
 
+    /* ── SETTINGS BUTTON ── */
+    .settings-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .settings-trigger:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--card);
+      transform: rotate(45deg);
+    }
+
+    /* ── SETTINGS OVERLAY ── */
+    #settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 80px 1.5rem 1.5rem;
+    }
+    #settings-overlay.open { display: flex; animation: fadeIn 0.15s ease; }
+
+    .settings-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 360px;
+      max-height: calc(100vh - 100px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,229,255,0.06);
+      animation: slideUp 0.2s ease;
+      overflow: hidden;
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      flex-shrink: 0;
+    }
+    .settings-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.08em;
+    }
+    .settings-close {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .settings-close:hover { border-color: #ff4d6d; color: #ff4d6d; }
+
+    .settings-body {
+      overflow-y: auto;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .settings-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .settings-section-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.1rem;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+    }
+    .settings-row label {
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .settings-row input[type="text"] {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.7rem;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+      min-width: 0;
+    }
+    .settings-row input[type="text"]:focus { border-color: var(--accent); }
+
+    .settings-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .preset-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-right: 0.2rem;
+    }
+    .settings-presets button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .settings-presets button:hover { border-color: var(--accent); color: var(--accent); }
+
+    .settings-action-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .settings-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .settings-action-btn.danger:hover { border-color: #ff4d6d; color: #ff4d6d; }
+
+    .color-swatches { display: flex; gap: 0.5rem; }
+    .swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+      padding: 0;
+    }
+    .swatch:hover { transform: scale(1.2); border-color: #fff; }
+    .swatch.active { border-color: #fff; transform: scale(1.15); }
+
+    .seg-control { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .seg-control button {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .seg-control button + button { border-left: 1px solid var(--border); }
+    .seg-control button.active { background: var(--accent); color: #000; }
+    .seg-control button:not(.active):hover { background: var(--card-hover); color: var(--text); }
+
     @media (max-width: 768px) {
       header { padding: 0 1rem; }
       .logo { font-size: 1.2rem; }
@@ -532,6 +739,8 @@
       main { padding: 1rem; }
       .game-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
       .footer-links { display: none; }
+      #settings-overlay { padding: 74px 0.8rem 0.8rem; }
+      .settings-panel { max-width: 100%; }
     }
     @media (max-width: 480px) {
       .game-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; }
@@ -588,6 +797,9 @@
         </span>
         <input type="text" id="search-input" placeholder="Search games..." oninput="filterGames(this.value)" />
       </div>
+      <button class="settings-trigger" onclick="openSettings()" title="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </header>
 
@@ -609,6 +821,78 @@
       <a href="#">Games</a>
     </div>
   </footer>
+
+  <!-- SETTINGS PANEL -->
+  <div id="settings-overlay" onclick="if(event.target===this)closeSettings()">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <div class="settings-title">Settings</div>
+        <button class="settings-close" onclick="closeSettings()">&#x2715;</button>
+      </div>
+      <div class="settings-body">
+
+        <div class="settings-section">
+          <div class="settings-section-label">Tab Cloak</div>
+          <div class="settings-row">
+            <label>Tab Title</label>
+            <input type="text" id="cloak-title" placeholder="e.g. Google Classroom" oninput="applyTabCloak()" />
+          </div>
+          <div class="settings-row">
+            <label>Tab Icon URL</label>
+            <input type="text" id="cloak-icon" placeholder="https://..." oninput="applyTabCloak()" />
+          </div>
+          <div class="settings-presets">
+            <span class="preset-label">Quick Presets:</span>
+            <button onclick="setCloak('Google Classroom','https://ssl.gstatic.com/classroom/favicon.png')">Classroom</button>
+            <button onclick="setCloak('Google Drive','https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png')">Drive</button>
+            <button onclick="setCloak('Khan Academy','https://www.khanacademy.org/favicon.ico')">Khan</button>
+            <button onclick="setCloak('Schoology','https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico')">Schoology</button>
+            <button onclick="setCloak('','')">Reset</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Stealth</div>
+          <div class="settings-row">
+            <label>Open site in about:blank tab</label>
+            <button class="settings-action-btn" onclick="openAboutBlank()">Open Now</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Appearance</div>
+          <div class="settings-row">
+            <label>Accent Color</label>
+            <div class="color-swatches">
+              <button class="swatch" style="background:#00e5ff" onclick="setAccent('#00e5ff','#7c3aed')" title="Cyan"></button>
+              <button class="swatch" style="background:#ff4d6d" onclick="setAccent('#ff4d6d','#c2185b')" title="Red"></button>
+              <button class="swatch" style="background:#a855f7" onclick="setAccent('#a855f7','#7c3aed')" title="Purple"></button>
+              <button class="swatch" style="background:#10b981" onclick="setAccent('#10b981','#059669')" title="Green"></button>
+              <button class="swatch" style="background:#f59e0b" onclick="setAccent('#f59e0b','#d97706')" title="Amber"></button>
+              <button class="swatch" style="background:#3b82f6" onclick="setAccent('#3b82f6','#2563eb')" title="Blue"></button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <label>Card Size</label>
+            <div class="seg-control">
+              <button id="sz-small"  onclick="setCardSize('small')">Small</button>
+              <button id="sz-medium" class="active" onclick="setCardSize('medium')">Medium</button>
+              <button id="sz-large"  onclick="setCardSize('large')">Large</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Account</div>
+          <div class="settings-row">
+            <label>Log out of UnblockZone</label>
+            <button class="settings-action-btn danger" onclick="doLogout()">Log Out</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- GAME MODAL -->
   <div id="game-modal">
@@ -680,7 +964,7 @@
     // Add more terms to the list as needed.
     var BLOCKED_TERMS = [
       "epstein", "jeffrey", "porn", "hentai", "sex", "nude", "nsfw",
-      "xxx", "naked", "adult", "COMMENTS", "SUGGEST", "GAMES"
+      "xxx", "naked", "adult", "18+", "erotic"
     ];
 
     function isBlocked(name) {
@@ -756,6 +1040,23 @@
       }));
     }
 
+    // Strip gn-math promo banners from game HTML before rendering
+    function stripPromos(html) {
+      // Remove any <div> or <a> tags that contain gn-math promo text or discord links
+      var promoPatterns = [
+        // The "SUGGEST GAMES" and "COMMENTS" popup divs
+        /<div[^>]*>[\s\S]*?(?:SUGGEST GAMES|COMMENTS|\.gg\/|discord\.gg|gn-math|Play more games at)[\s\S]*?<\/div>/gi,
+        // Standalone anchor tags linking to discord/gn-math
+        /<a[^>]*(?:discord\.gg|gn-math\.github)[\s\S]*?<\/a>/gi,
+        // Script tags that create/append those popup elements
+        /<script[^>]*>[\s\S]*?(?:SUGGEST GAMES|COMMENTS|\.gg\/D4c9|gn-math\.github\.io)[\s\S]*?<\/script>/gi,
+      ];
+      promoPatterns.forEach(function(pattern) {
+        html = html.replace(pattern, '');
+      });
+      return html;
+    }
+
     var currentZone = null;
 
     function launchGame(zone) {
@@ -777,6 +1078,8 @@
       fetch(url)
         .then(function(res) { return res.text(); })
         .then(function(html) {
+          // Strip gn-math promo popups/banners before rendering
+          html = stripPromos(html);
           var blob = new Blob([html], { type: "text/html" });
           var blobUrl = URL.createObjectURL(blob);
           // Revoke the previous blob if any
@@ -816,7 +1119,87 @@
       if (e.key === "Escape") closeModal();
     });
 
-    // Boot
+    // ── SETTINGS ──
+    function openSettings() {
+      document.getElementById("settings-overlay").classList.add("open");
+    }
+    function closeSettings() {
+      document.getElementById("settings-overlay").classList.remove("open");
+    }
+
+    // Tab Cloak
+    function applyTabCloak() {
+      var title = document.getElementById("cloak-title").value.trim();
+      var icon  = document.getElementById("cloak-icon").value.trim();
+      document.title = title || "UnblockZone";
+      var link = document.querySelector("link[rel~='icon']");
+      if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
+      link.href = icon || "";
+    }
+    function setCloak(title, icon) {
+      document.getElementById("cloak-title").value = title;
+      document.getElementById("cloak-icon").value  = icon;
+      applyTabCloak();
+    }
+
+    // Open in about:blank
+    function openAboutBlank() {
+      var w = window.open("about:blank", "_blank");
+      if (!w) return;
+      w.document.open();
+      w.document.write(
+        '<!DOCTYPE html><html><head>' +
+        '<meta charset="UTF-8"/>' +
+        '<meta name="viewport" content="width=device-width,initial-scale=1"/>' +
+        '<title>' + document.title + '</title>' +
+        '<style>*{margin:0;padding:0}html,body,iframe{width:100%;height:100%;border:none;display:block;overflow:hidden;background:#0d0d0f}</style>' +
+        '</head><body>' +
+        '<iframe src="' + location.href + '" allowfullscreen></iframe>' +
+        '</body></html>'
+      );
+      w.document.close();
+    }
+
+    // Accent color
+    function setAccent(color, color2) {
+      document.documentElement.style.setProperty("--accent", color);
+      document.documentElement.style.setProperty("--accent2", color2);
+      document.documentElement.style.setProperty("--glow", "0 0 20px " + color + "33");
+      document.querySelectorAll(".swatch").forEach(function(s) {
+        s.classList.toggle("active", s.style.background === color || s.getAttribute("style") === "background:" + color);
+      });
+      localStorage.setItem("uz_accent", color);
+      localStorage.setItem("uz_accent2", color2);
+    }
+
+    // Card size
+    function setCardSize(size) {
+      var minW = size === "small" ? "150px" : size === "large" ? "260px" : "200px";
+      document.querySelector(".game-grid").style.gridTemplateColumns = "repeat(auto-fill, minmax(" + minW + ", 1fr))";
+      document.querySelectorAll(".seg-control button").forEach(function(b) { b.classList.remove("active"); });
+      document.getElementById("sz-" + size).classList.add("active");
+      localStorage.setItem("uz_cardsize", size);
+    }
+
+    // Logout
+    function doLogout() {
+      if (confirm("Log out of UnblockZone?")) {
+        sessionStorage.removeItem("uz_loggedin");
+        location.reload();
+      }
+    }
+
+    // Restore saved settings on load
+    function restoreSettings() {
+      var accent  = localStorage.getItem("uz_accent");
+      var accent2 = localStorage.getItem("uz_accent2");
+      if (accent) setAccent(accent, accent2 || "#7c3aed");
+      var size = localStorage.getItem("uz_cardsize");
+      if (size) setCardSize(size);
+    }
+
+    // ── BOOT ──
+    restoreSettings();
     loadGames();
   </script>
 </body>
