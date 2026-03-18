@@ -1125,12 +1125,16 @@
     // Add more terms to the list as needed.
     var BLOCKED_TERMS = [
       "epstein", "jeffrey", "porn", "hentai", "sex", "nude", "nsfw",
-      "xxx", "naked", "adult", "18+", "erotic"
+      "xxx", "naked", "adult", "18+", "erotic",
+      "comments", "suggest games", "suggest", ".gg/", "discord"
     ];
 
-    function isBlocked(name) {
-      var lower = name.toLowerCase();
-      return BLOCKED_TERMS.some(function(term) { return lower.includes(term); });
+    function isBlocked(zone) {
+      var name = (zone.name || "").toLowerCase();
+      var url  = (zone.url  || "").toLowerCase();
+      return BLOCKED_TERMS.some(function(term) {
+        return name.includes(term) || url.includes(term);
+      });
     }
 
     async function loadGames() {
@@ -1147,7 +1151,7 @@
         if (!json) throw new Error("All URLs failed");
 
         // Filter out blocked games then sort alphabetically
-        allZones = json.filter(function(z) { return !isBlocked(z.name); });
+        allZones = json.filter(function(z) { return !isBlocked(z); });
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
       } catch(e) {
