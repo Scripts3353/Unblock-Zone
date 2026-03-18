@@ -394,6 +394,32 @@
       letter-spacing: 0.05em;
     }
 
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 0.3rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
     /* ── LOADING / EMPTY ── */
     .status-msg {
       grid-column: 1/-1;
@@ -967,7 +993,10 @@
   <!-- MAIN -->
   <main>
     <div class="section-label">// Play Now</div>
-    <div class="section-title">All Games</div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-all"   onclick="switchTab('all')">All Games</button>
+      <button class="tab-btn"        id="tab-extra" onclick="switchTab('extra')">Extra</button>
+    </div>
     <div class="game-grid" id="game-grid">
       <div class="status-msg"><span class="loading-dots">Loading games</span></div>
     </div>
@@ -976,7 +1005,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="footer-logo">UnblockZone</div>
-    <div class="footer-text">Unblocked</div>
+    <div class="footer-text">Free / Fast / Unblocked</div>
     <div class="footer-links">
       <a href="#">Home</a>
       <a href="#">Games</a>
@@ -1119,6 +1148,19 @@
     ];
 
     var allZones = [];
+    var customGames = [];
+    var activeTab = 'all';
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.getElementById('tab-all').classList.toggle('active', tab === 'all');
+      document.getElementById('tab-extra').classList.toggle('active', tab === 'extra');
+      if (tab === 'extra') {
+        renderGames(customGames);
+      } else {
+        renderGames(allZones);
+      }
+    }
 
     // ── BLOCKLIST ──
     // Any game whose name contains one of these words (case-insensitive) will be hidden.
@@ -1153,7 +1195,7 @@
         // Filter out blocked games then sort alphabetically
         allZones = json.filter(function(z) { return !isBlocked(z); });
 
-        // ── CUSTOM GAMES — pinned to the top ──
+        // ── CUSTOM GAMES — shown in the Extra tab ──
         var CUSTOM_GAMES = [
           {
             name: "Interstellar",
@@ -1161,14 +1203,14 @@
             cover: "https://tse4.mm.bing.net/th/id/OIP.NyKRF1dlpTdxEWmYcTRg3gHaHa?rs=1&pid=ImgDetMain",
             custom: true
           },
-            {
+          {
             name: "GnMath",
             url: "games/gn.html",
             cover: "https://i.imgur.com/hg87KNx.png",
             custom: true
           }
         ];
-        allZones = CUSTOM_GAMES.concat(allZones);
+        customGames = CUSTOM_GAMES;
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
       } catch(e) {
@@ -1216,8 +1258,9 @@
 
     function filterGames(query) {
       var q = query.toLowerCase().trim();
-      if (!q) { renderGames(allZones); return; }
-      renderGames(allZones.filter(function(z) {
+      var list = activeTab === 'extra' ? customGames : allZones;
+      if (!q) { renderGames(list); return; }
+      renderGames(list.filter(function(z) {
         return z.name.toLowerCase().includes(q);
       }));
     }
