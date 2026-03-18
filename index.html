@@ -1152,6 +1152,17 @@
 
         // Filter out blocked games then sort alphabetically
         allZones = json.filter(function(z) { return !isBlocked(z); });
+
+        // ── CUSTOM GAMES — pinned to the top ──
+        var CUSTOM_GAMES = [
+          {
+            name: "Interstellar",
+            url: "games/interstellar.html",
+            cover: "https://tse4.mm.bing.net/th/id/OIP.NyKRF1dlpTdxEWmYcTRg3gHaHa?rs=1&pid=ImgDetMain",
+            custom: true
+          }
+        ];
+        allZones = CUSTOM_GAMES.concat(allZones);
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
       } catch(e) {
@@ -1174,7 +1185,7 @@
         card.onclick = function() { launchGame(zone); };
 
         var coverSrc = zone.cover
-          ? zone.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
+          ? (zone.custom ? zone.cover : zone.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL))
           : "";
 
         var imgHTML = coverSrc
@@ -1263,7 +1274,7 @@
     function launchGame(zone) {
       currentZone = zone;
       var url = zone.url
-        ? zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL)
+        ? (zone.custom ? zone.url : zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL))
         : "";
 
       document.getElementById("modal-game-title").textContent = zone.name;
