@@ -1208,25 +1208,49 @@
       // 2. Remove static popup divs/anchors
       html = html.replace(/<div[^>]*>[\s\S]{0,300}?(?:SUGGEST GAMES|COMMENTS|discord\.gg|gn-math)[\s\S]{0,300}?<\/div>/gi, '');
       html = html.replace(/<a[^>]*(?:discord\.gg|gn-math\.github)[^>]*>[\s\S]*?<\/a>/gi, '');
-      // 3. Inject a MutationObserver before </body> that removes any promo elements added at runtime
+
+      // 3. Inject CSS right at the start of <head> to instantly hide promo elements
+      var killCSS = '<style>' +
+        'div[style*="position: fixed"],div[style*="position:fixed"]{' +
+        '  --_t: var(--_t);' +
+        '}' +
+        // Hide any fixed-position div whose content matches promo text (broad net)
+        // We use a data attribute approach via the observer below instead
+        '[data-uz-blocked]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}' +
+        '</style>';
+      html = html.replace(/<head>/i, '<head>' + killCSS);
+
+      // 4. Inject MutationObserver + immediate DOM scan before </body>
       var observer = '<script>' +
         '(function(){' +
-        'var KILL=["discord.gg","gn-math","SUGGEST GAMES","COMMENTS","Play more games"];' +
-        'function clean(n){' +
-        '  if(!n||n.nodeType!==1)return;' +
-        '  var t=(n.innerText||"")+(n.href||"")+(n.src||"");' +
-        '  if(KILL.some(function(k){return t.includes(k);})){n.remove();return;}' +
-        '  n.querySelectorAll("*").forEach(function(c){' +
-        '    var ct=(c.innerText||"")+(c.href||"");' +
-        '    if(KILL.some(function(k){return ct.includes(k);}))c.remove();' +
-        '  });' +
+        'var KILL=["discord.gg","gn-math","SUGGEST GAMES","COMMENTS","Play more games","D4c9"];' +
+        'function nuke(n){' +
+        '  if(!n||n.nodeType!==1||n.hasAttribute("data-uz-blocked"))return;' +
+        '  var t=(n.textContent||"")+(n.getAttribute("href")||"")+(n.getAttribute("src")||"");' +
+        '  if(KILL.some(function(k){return t.indexOf(k)!==-1;})){' +
+        '    n.setAttribute("data-uz-blocked","1");' +
+        '    n.style.cssText="display:none!important";' +
+        '    return;' +
+        '  }' +
         '}' +
-        'var obs=new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(clean);});});' +
+        'function scanAll(){document.querySelectorAll("body *").forEach(nuke);}' +
+        'var obs=new MutationObserver(function(ms){' +
+        '  ms.forEach(function(m){' +
+        '    m.addedNodes.forEach(function(n){' +
+        '      nuke(n);' +
+        '      if(n.querySelectorAll)n.querySelectorAll("*").forEach(nuke);' +
+        '    });' +
+        '  });' +
+        '});' +
         'obs.observe(document.documentElement,{childList:true,subtree:true});' +
-        'clean(document.body);' +
+        'if(document.body)scanAll();' +
+        'document.addEventListener("DOMContentLoaded",scanAll);' +
+        'setTimeout(scanAll,500);' +
+        'setTimeout(scanAll,1500);' +
         '})();' +
         '<\/script>';
       html = html.replace(/<\/body>/i, observer + '</body>');
+      if (html.indexOf(observer) === -1) html += observer;
       return html;
     }
 
