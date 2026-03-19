@@ -436,6 +436,26 @@
     .tab-btn:hover { color: var(--text); }
     .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
+    .admin-tab-btn {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      color: var(--muted); font-family: 'Orbitron', sans-serif; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 0.7rem 0.9rem;
+      cursor: pointer; transition: color 0.2s, border-color 0.2s; margin-bottom: -1px;
+    }
+    .admin-tab-btn:hover { color: var(--text); }
+    .admin-tab-btn.active { color: #ff4d6d; border-bottom-color: #ff4d6d; }
+    .admin-stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.8rem; text-align: center;
+    }
+    .admin-stat-num { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+    .admin-stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Restricted login state */
+    #login-overlay.restricted { background: rgba(40,0,0,0.97); }
+    #login-overlay.restricted .login-box { border-color: #ff4d6d; box-shadow: 0 0 40px rgba(255,77,109,0.3); }
+    #login-overlay.restricted .login-logo { background: linear-gradient(135deg, #ff4d6d, #c2185b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
     /* ── SITE LOCK ── */
     #site-lock {
       position: fixed; inset: 0; z-index: 999;
@@ -1159,37 +1179,111 @@
     <div class="admin-panel">
       <div class="admin-header">
         <div class="admin-title">&#9760; Admin Panel</div>
-        <button class="admin-close" onclick="closeAdmin()">&#x2715;</button>
+        <div style="display:flex;align-items:center;gap:0.5rem">
+          <div style="font-size:0.72rem;color:var(--muted)">Logged in as <strong style="color:#ff4d6d">lukas</strong></div>
+          <button class="admin-close" onclick="closeAdmin()">&#x2715;</button>
+        </div>
       </div>
+
+      <!-- Admin Tabs -->
+      <div style="display:flex;border-bottom:1px solid var(--border);padding:0 1.2rem;background:var(--card)">
+        <button class="admin-tab-btn active" id="atab-overview" onclick="switchAdminTab('overview')">Overview</button>
+        <button class="admin-tab-btn" id="atab-users"    onclick="switchAdminTab('users')">Users</button>
+        <button class="admin-tab-btn" id="atab-site"     onclick="switchAdminTab('site')">Site</button>
+        <button class="admin-tab-btn" id="atab-access"   onclick="switchAdminTab('access')">Access</button>
+      </div>
+
       <div class="admin-body">
 
-        <!-- Banner -->
-        <div class="admin-section">
-          <div class="admin-section-title">Site Banner</div>
-          <div class="admin-row">
-            <input type="text" id="admin-banner-text" placeholder="Banner message..." />
-            <button class="admin-btn success" onclick="saveBanner()">Save</button>
-            <button class="admin-btn danger" onclick="clearBanner()">Clear</button>
-          </div>
-        </div>
-
-        <!-- Site Lock -->
-        <div class="admin-section">
-          <div class="admin-section-title">Site Lock</div>
-          <div class="admin-row">
-            <div class="admin-toggle">
-              <button class="toggle-switch" id="lock-toggle" onclick="toggleSiteLock()"></button>
-              <span class="toggle-label" id="lock-label">Site is unlocked</span>
+        <!-- OVERVIEW TAB -->
+        <div id="atab-overview-content" class="admin-tab-content">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin-bottom:0.5rem">
+            <div class="admin-stat-card">
+              <div class="admin-stat-num" id="stat-total">—</div>
+              <div class="admin-stat-label">Total Users</div>
+            </div>
+            <div class="admin-stat-card" style="border-color:#10b98133">
+              <div class="admin-stat-num" style="color:#10b981" id="stat-online">—</div>
+              <div class="admin-stat-label">Online Now</div>
+            </div>
+            <div class="admin-stat-card" style="border-color:#ff4d6d33">
+              <div class="admin-stat-num" style="color:#ff4d6d" id="stat-restricted">—</div>
+              <div class="admin-stat-label">Restricted</div>
             </div>
           </div>
-          <div class="admin-row" style="font-size:0.78rem;color:var(--muted)">Unlock password is <strong style="color:var(--text)">321</strong></div>
+          <div class="admin-section">
+            <div class="admin-section-title">Recent Activity</div>
+            <div id="admin-recent" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
         </div>
 
-        <!-- Users -->
-        <div class="admin-section">
-          <div class="admin-section-title">Users</div>
-          <div id="admin-user-list">
-            <div style="color:var(--muted);font-size:0.85rem">Loading users...</div>
+        <!-- USERS TAB -->
+        <div id="atab-users-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+              <div class="admin-section-title" style="margin:0">All Users</div>
+              <input type="text" id="user-search" placeholder="Search users..." oninput="filterUserTable(this.value)"
+                style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.7rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none;width:160px"/>
+            </div>
+            <div id="admin-user-list" style="overflow-x:auto">
+              <div style="color:var(--muted);font-size:0.85rem">Loading users...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SITE TAB -->
+        <div id="atab-site-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Site Banner</div>
+            <div class="admin-row">
+              <input type="text" id="admin-banner-text" placeholder="Banner message shown to all users..." />
+            </div>
+            <div class="admin-row">
+              <select id="banner-color" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.7rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none">
+                <option value="cyan">Cyan (default)</option>
+                <option value="red">Red (warning)</option>
+                <option value="green">Green (success)</option>
+                <option value="yellow">Yellow (notice)</option>
+              </select>
+              <button class="admin-btn success" onclick="saveBanner()">Save Banner</button>
+              <button class="admin-btn danger" onclick="clearBanner()">Clear</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Site Lock</div>
+            <div class="admin-row">
+              <div class="admin-toggle">
+                <button class="toggle-switch" id="lock-toggle" onclick="toggleSiteLock()"></button>
+                <span class="toggle-label" id="lock-label">Site is unlocked</span>
+              </div>
+            </div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">Unlock password: <strong style="color:var(--text)">321</strong></div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Maintenance Message</div>
+            <div class="admin-row">
+              <input type="text" id="admin-maintenance-text" placeholder="Message shown on lock screen..." />
+              <button class="admin-btn success" onclick="saveMaintenance()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCESS TAB -->
+        <div id="atab-access-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Give / Revoke Special Access</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">Special access unlocks the Extra tab for a user.</div>
+            <div id="access-user-list" style="display:flex;flex-direction:column;gap:0.5rem">
+              <div style="color:var(--muted);font-size:0.82rem">Loading...</div>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Blocked Usernames</div>
+            <div class="admin-row">
+              <input type="text" id="blocked-username-input" placeholder="Username to block from registering..." />
+              <button class="admin-btn danger" onclick="addBlockedUsername()">Block</button>
+            </div>
+            <div id="blocked-list" style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.4rem"></div>
           </div>
         </div>
 
@@ -1248,8 +1342,12 @@
 
       btn.classList.add("loading"); btn.disabled = true;
 
-      // Check if username already exists
-      db.collection("users").where("username", "==", username).get().then(function(snap) {
+      // Check blocked usernames + if username exists
+      db.collection("settings").doc("site").get().then(function(settingsDoc) {
+        var blocked = settingsDoc.exists ? (settingsDoc.data().blockedUsernames || []) : [];
+        if (blocked.includes(username.toLowerCase())) throw new Error("That username is not allowed.");
+        return db.collection("users").where("username", "==", username).get();
+      }).then(function(snap) {
         if (!snap.empty) throw new Error("Username already taken.");
         return db.collection("users").add({
           username: username,
@@ -1301,9 +1399,17 @@
       if (data.banner && data.banner.trim()) {
         banner.textContent = data.banner;
         banner.classList.add("visible");
+        var bannerColors = {
+          red:    "background:rgba(255,77,109,0.15);border-color:#ff4d6d;color:#ff4d6d",
+          green:  "background:rgba(16,185,129,0.15);border-color:#10b981;color:#10b981",
+          yellow: "background:rgba(245,158,11,0.15);border-color:#f59e0b;color:#f59e0b",
+          cyan:   "background:linear-gradient(135deg,#00e5ff22,#7c3aed22);border-color:var(--accent);color:var(--accent)"
+        };
+        banner.style.cssText = "display:block;padding:0.5rem 2rem;text-align:center;font-size:0.88rem;font-weight:600;border-bottom:1px solid;position:relative;z-index:9;" + (bannerColors[data.bannerColor] || bannerColors.cyan);
       } else {
         banner.classList.remove("visible");
         banner.textContent = "";
+        banner.style.cssText = "";
       }
 
       // Site lock — don't lock out admin
@@ -1311,6 +1417,8 @@
       var lockLabel  = document.getElementById("lock-label");
       if (data.locked && !isAdmin) {
         document.getElementById("site-lock").classList.remove("hidden");
+        var lockSub = document.querySelector(".lock-sub");
+        if (lockSub) lockSub.textContent = data.maintenanceMsg || "This site has been locked by the administrator.";
       } else {
         document.getElementById("site-lock").classList.add("hidden");
       }
@@ -1371,23 +1479,31 @@
       db.collection("users").where("username", "==", username).get().then(function(snap) {
         if (snap.empty) {
           // New user — create account
-          return db.collection("users").add({
-            username: username,
-            password: password,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-            restricted: false,
-            specialAccess: false
-          }).then(function(ref) {
-            return { id: ref.id, data: { username: username, password: password, restricted: false, specialAccess: false }};
+          // Check blocked usernames first
+          return db.collection("settings").doc("site").get().then(function(settingsDoc) {
+            var blocked = settingsDoc.exists ? (settingsDoc.data().blockedUsernames || []) : [];
+            if (blocked.includes(username.toLowerCase())) throw new Error("That username is not allowed.");
+            return db.collection("users").add({
+              username: username,
+              password: password,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+              restricted: false,
+              specialAccess: false
+            }).then(function(ref) {
+              return { id: ref.id, data: { username: username, password: password, restricted: false, specialAccess: false }};
+            });
           });
         } else {
           var doc = snap.docs[0];
           var data = doc.data();
-          if (data.password !== password) {
-            throw new Error("wrong_password");
+          if (data.password !== password) throw new Error("wrong_password");
+          // Check if restricted
+          if (data.restricted) {
+            // Turn login screen red
+            document.getElementById("login-overlay").classList.add("restricted");
+            throw new Error("Your account has been restricted by an administrator.");
           }
-          // Update lastSeen
           doc.ref.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           return { id: doc.id, data: data };
         }
@@ -1751,6 +1867,9 @@
     }
 
     // ── ADMIN ──
+    var allUsersCache = [];
+    var blockedUsernames = [];
+
     function openAdmin() {
       document.getElementById("admin-overlay").classList.add("open");
       loadAdminData();
@@ -1759,50 +1878,131 @@
       document.getElementById("admin-overlay").classList.remove("open");
     }
 
-    function loadAdminData() {
-      // Load current banner
-      db.collection("settings").doc("site").get().then(function(doc) {
-        if (doc.exists && doc.data().banner) {
-          document.getElementById("admin-banner-text").value = doc.data().banner;
-        }
+    function switchAdminTab(tab) {
+      ['overview','users','site','access'].forEach(function(t) {
+        document.getElementById('atab-' + t).classList.toggle('active', t === tab);
+        document.getElementById('atab-' + t + '-content').style.display = t === tab ? 'block' : 'none';
       });
-      // Load users
-      renderUserTable();
+      if (tab === 'access') renderAccessList();
+      if (tab === 'users') renderUserTable(allUsersCache);
     }
 
-    function renderUserTable() {
-      var container = document.getElementById("admin-user-list");
-      db.collection("users").orderBy("lastSeen", "desc").onSnapshot(function(snap) {
-        if (snap.empty) {
-          container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem">No users yet.</div>';
-          return;
+    function loadAdminData() {
+      // Load site settings
+      db.collection("settings").doc("site").get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        if (d.banner) document.getElementById("admin-banner-text").value = d.banner;
+        if (d.maintenanceMsg) document.getElementById("admin-maintenance-text").value = d.maintenanceMsg;
+        if (d.blockedUsernames) {
+          blockedUsernames = d.blockedUsernames;
+          renderBlockedList();
         }
-        var html = '<table class="user-table"><thead><tr>' +
-          '<th>Username</th><th>Password</th><th>Last Seen</th><th>Status</th><th>Actions</th>' +
-          '</tr></thead><tbody>';
-        snap.docs.forEach(function(doc) {
-          var d = doc.data();
-          var id = doc.id;
-          var lastSeen = d.lastSeen ? new Date(d.lastSeen.seconds * 1000).toLocaleString() : "Never";
-          var badges = '';
-          if (d.specialAccess) badges += '<span class="badge special">Special</span> ';
-          if (d.restricted)    badges += '<span class="badge restricted">Restricted</span>';
-          if (!d.restricted && !d.specialAccess) badges = '<span class="badge ' + (d.online ? 'online' : '') + '">' + (d.online ? '● Online' : 'Offline') + '</span>';
-          html += '<tr>' +
-            '<td>' + d.username + '</td>' +
-            '<td style="color:var(--muted)">' + d.password + '</td>' +
-            '<td style="color:var(--muted);font-size:0.75rem">' + lastSeen + '</td>' +
-            '<td>' + badges + '</td>' +
-            '<td style="display:flex;gap:0.4rem;flex-wrap:wrap">' +
-              '<button class="admin-btn ' + (d.restricted ? 'success' : 'danger') + '" onclick="toggleRestrict(\'' + id + '\',' + !!d.restricted + ')">' + (d.restricted ? 'Unrestrict' : 'Restrict') + '</button>' +
-              '<button class="admin-btn ' + (d.specialAccess ? 'danger' : 'success') + '" onclick="toggleSpecial(\'' + id + '\',' + !!d.specialAccess + ')">' + (d.specialAccess ? 'Revoke Special' : 'Give Special') + '</button>' +
-              '<button class="admin-btn danger" onclick="deleteUser(\'' + id + '\')">Delete</button>' +
-            '</td>' +
-          '</tr>';
-        });
-        html += '</tbody></table>';
-        container.innerHTML = html;
       });
+
+      // Live user stats + table
+      db.collection("users").onSnapshot(function(snap) {
+        allUsersCache = snap.docs.map(function(d) { return { id: d.id, ...d.data() }; });
+        var online = allUsersCache.filter(function(u) { return u.online; }).length;
+        var restricted = allUsersCache.filter(function(u) { return u.restricted; }).length;
+        document.getElementById("stat-total").textContent = allUsersCache.length;
+        document.getElementById("stat-online").textContent = online;
+        document.getElementById("stat-restricted").textContent = restricted;
+        document.getElementById("online-num").textContent = online;
+
+        // Recent activity (last 5 seen)
+        var sorted = allUsersCache.slice().sort(function(a, b) {
+          var at = a.lastSeen ? a.lastSeen.seconds : 0;
+          var bt = b.lastSeen ? b.lastSeen.seconds : 0;
+          return bt - at;
+        }).slice(0, 5);
+        var recentHtml = sorted.map(function(u) {
+          var t = u.lastSeen ? new Date(u.lastSeen.seconds * 1000).toLocaleString() : "Never";
+          var dot = u.online ? '<span style="color:#10b981">●</span>' : '<span style="color:var(--muted)">○</span>';
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)">' +
+            '<span>' + dot + ' <strong>' + u.username + '</strong></span>' +
+            '<span style="color:var(--muted);font-size:0.75rem">' + t + '</span>' +
+            '</div>';
+        }).join('');
+        document.getElementById("admin-recent").innerHTML = recentHtml || '<span style="color:var(--muted)">No activity yet.</span>';
+
+        // Re-render current tab
+        var activeTab = document.querySelector('.admin-tab-btn.active');
+        if (activeTab && activeTab.id === 'atab-users') renderUserTable(allUsersCache);
+        if (activeTab && activeTab.id === 'atab-access') renderAccessList();
+      });
+    }
+
+    function renderUserTable(users) {
+      var container = document.getElementById("admin-user-list");
+      if (!users || !users.length) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem">No users yet.</div>';
+        return;
+      }
+      var html = '<table class="user-table"><thead><tr>' +
+        '<th>User</th><th>Password</th><th>Status</th><th>Last Seen</th><th>Actions</th>' +
+        '</tr></thead><tbody>';
+      users.forEach(function(u) {
+        var lastSeen = u.lastSeen ? new Date(u.lastSeen.seconds * 1000).toLocaleString() : "Never";
+        var status = u.restricted ? '<span class="badge restricted">Restricted</span>' :
+          u.online ? '<span class="badge online">● Online</span>' :
+          u.specialAccess ? '<span class="badge special">Special</span>' :
+          '<span style="color:var(--muted);font-size:0.75rem">Offline</span>';
+        html += '<tr>' +
+          '<td><strong>' + u.username + '</strong></td>' +
+          '<td style="color:var(--muted)">' + u.password + '</td>' +
+          '<td>' + status + '</td>' +
+          '<td style="color:var(--muted);font-size:0.75rem">' + lastSeen + '</td>' +
+          '<td style="display:flex;gap:0.3rem;flex-wrap:wrap">' +
+            '<button class="admin-btn ' + (u.restricted ? 'success' : 'danger') + '" onclick="toggleRestrict(\'' + u.id + '\',' + !!u.restricted + ')">' + (u.restricted ? 'Unrestrict' : 'Restrict') + '</button>' +
+            '<button class="admin-btn danger" onclick="deleteUser(\'' + u.id + '\',\'' + u.username + '\')">Delete</button>' +
+          '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function filterUserTable(q) {
+      var filtered = q ? allUsersCache.filter(function(u) { return u.username.toLowerCase().includes(q.toLowerCase()); }) : allUsersCache;
+      renderUserTable(filtered);
+    }
+
+    function renderAccessList() {
+      var container = document.getElementById("access-user-list");
+      if (!allUsersCache.length) { container.innerHTML = '<div style="color:var(--muted);font-size:0.82rem">No users.</div>'; return; }
+      container.innerHTML = allUsersCache.map(function(u) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border)">' +
+          '<span style="font-size:0.85rem">' + u.username + (u.specialAccess ? ' <span class="badge special">Special</span>' : '') + '</span>' +
+          '<button class="admin-btn ' + (u.specialAccess ? 'danger' : 'success') + '" onclick="toggleSpecial(\'' + u.id + '\',' + !!u.specialAccess + ')">' +
+            (u.specialAccess ? 'Revoke' : 'Grant Access') +
+          '</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderBlockedList() {
+      var container = document.getElementById("blocked-list");
+      if (!blockedUsernames.length) { container.innerHTML = '<span style="color:var(--muted);font-size:0.78rem">No blocked usernames.</span>'; return; }
+      container.innerHTML = blockedUsernames.map(function(name) {
+        return '<span style="background:var(--surface);border:1px solid #ff4d6d44;border-radius:5px;padding:0.2rem 0.6rem;font-size:0.78rem;color:#ff4d6d;display:flex;align-items:center;gap:0.4rem">' +
+          name + '<button onclick="removeBlockedUsername(\'' + name + '\')" style="background:none;border:none;color:#ff4d6d;cursor:pointer;font-size:0.9rem;padding:0">&#x2715;</button>' +
+        '</span>';
+      }).join('');
+    }
+
+    function addBlockedUsername() {
+      var val = document.getElementById("blocked-username-input").value.trim().toLowerCase();
+      if (!val || blockedUsernames.includes(val)) return;
+      blockedUsernames.push(val);
+      document.getElementById("blocked-username-input").value = "";
+      db.collection("settings").doc("site").set({ blockedUsernames: blockedUsernames }, { merge: true });
+      renderBlockedList();
+    }
+    function removeBlockedUsername(name) {
+      blockedUsernames = blockedUsernames.filter(function(n) { return n !== name; });
+      db.collection("settings").doc("site").set({ blockedUsernames: blockedUsernames }, { merge: true });
+      renderBlockedList();
     }
 
     function toggleRestrict(id, current) {
@@ -1811,21 +2011,25 @@
     function toggleSpecial(id, current) {
       db.collection("users").doc(id).update({ specialAccess: !current });
     }
-    function deleteUser(id) {
-      if (confirm("Delete this user? They will need to create a new account.")) {
+    function deleteUser(id, username) {
+      if (confirm("Delete " + username + "? They will need to re-register.")) {
         db.collection("users").doc(id).delete();
       }
     }
 
     function saveBanner() {
       var text = document.getElementById("admin-banner-text").value.trim();
-      db.collection("settings").doc("site").set({ banner: text }, { merge: true });
+      var color = document.getElementById("banner-color").value;
+      db.collection("settings").doc("site").set({ banner: text, bannerColor: color }, { merge: true });
     }
     function clearBanner() {
       document.getElementById("admin-banner-text").value = "";
       db.collection("settings").doc("site").set({ banner: "" }, { merge: true });
     }
-
+    function saveMaintenance() {
+      var text = document.getElementById("admin-maintenance-text").value.trim();
+      db.collection("settings").doc("site").set({ maintenanceMsg: text }, { merge: true });
+    }
     function toggleSiteLock() {
       db.collection("settings").doc("site").get().then(function(doc) {
         var current = doc.exists ? !!doc.data().locked : false;
@@ -1833,7 +2037,7 @@
       });
     }
 
-    // Logout — just reload
+    // Logout
     function doLogout() {
       if (confirm("Log out?")) location.reload();
     }
