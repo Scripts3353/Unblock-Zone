@@ -992,7 +992,33 @@
         <span class="login-btn-text">Sign In</span>
         <div class="login-spinner"></div>
       </button>
+      <div style="text-align:center;margin-top:0.8rem">
+        <button onclick="showRegister()" style="background:none;border:none;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:0.8rem;cursor:pointer;text-decoration:underline;transition:color 0.2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Create an account</button>
+      </div>
     </div>
+
+    <!-- REGISTER VIEW (hidden by default) -->
+    <div class="login-box" id="register-box" style="display:none">
+      <div class="login-logo">Unblock<span>Zone</span></div>
+      <div class="login-subtitle">Create your account</div>
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="reg-user" placeholder="Choose a username" autocomplete="off" onkeydown="if(event.key==='Enter')doRegister()" />
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="reg-pass" placeholder="Choose a password" autocomplete="off" onkeydown="if(event.key==='Enter')doRegister()" />
+      </div>
+      <div class="login-error" id="reg-error"></div>
+      <button class="login-btn" id="reg-btn" onclick="doRegister()">
+        <span class="login-btn-text">Create Account</span>
+        <div class="login-spinner"></div>
+      </button>
+      <div style="text-align:center;margin-top:0.8rem">
+        <button onclick="showLogin()" style="background:none;border:none;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:0.8rem;cursor:pointer;text-decoration:underline;transition:color 0.2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Already have an account? Sign in</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- NOTICE OVERLAY -->
@@ -1030,7 +1056,13 @@
 
   <!-- MAIN -->
   <main>
-    <div class="section-label">// Play Now</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem">
+      <div class="section-label">// Play Now</div>
+      <div id="online-count" style="font-size:0.75rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem">
+        <span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 6px #10b981"></span>
+        <span id="online-num">0</span> online
+      </div>
+    </div>
     <div class="tabs">
       <button class="tab-btn active" id="tab-all"   onclick="switchTab('all')">All Games</button>
       <button class="tab-btn locked-tab" id="tab-extra" onclick="switchTab('extra')">Extra</button>
@@ -1190,7 +1222,70 @@
 
   <script>
     // ── LOGIN ──
-    // ── FIREBASE AUTH ──
+    // ── LOGIN UI TOGGLE ──
+    function showRegister() {
+      document.getElementById("login-box") && (document.querySelector("#login-overlay .login-box:first-child").style.display = "none");
+      document.getElementById("register-box").style.display = "block";
+    }
+    function showLogin() {
+      document.getElementById("register-box").style.display = "none";
+      document.querySelector("#login-overlay .login-box:first-child").style.display = "block";
+    }
+
+    function doRegister() {
+      var username = document.getElementById("reg-user").value.trim();
+      var password = document.getElementById("reg-pass").value;
+      var err = document.getElementById("reg-error");
+      var btn = document.getElementById("reg-btn");
+      err.classList.remove("show");
+
+      if (!username || !password) {
+        err.classList.add("show"); err.textContent = "Fill in all fields."; return;
+      }
+      if (username === "lukas") {
+        err.classList.add("show"); err.textContent = "That username is taken."; return;
+      }
+
+      btn.classList.add("loading"); btn.disabled = true;
+
+      // Check if username already exists
+      db.collection("users").where("username", "==", username).get().then(function(snap) {
+        if (!snap.empty) throw new Error("Username already taken.");
+        return db.collection("users").add({
+          username: username,
+          password: password,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          restricted: false,
+          specialAccess: false
+        });
+      }).then(function(ref) {
+        currentUser = { id: ref.id, username: username, password: password, restricted: false, specialAccess: false };
+        btn.classList.remove("loading"); btn.disabled = false;
+        document.getElementById("login-overlay").classList.add("hidden");
+        startPresence(ref.id);
+      }).catch(function(e) {
+        btn.classList.remove("loading"); btn.disabled = false;
+        err.classList.add("show"); err.textContent = e.message;
+      });
+    }
+
+    // ── ONLINE PRESENCE ──
+    function startPresence(userId) {
+      // Update lastSeen every 30s and mark online
+      db.collection("users").doc(userId).update({ online: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+      setInterval(function() {
+        db.collection("users").doc(userId).update({ online: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+      }, 30000);
+      // Mark offline on tab close
+      window.addEventListener("beforeunload", function() {
+        db.collection("users").doc(userId).update({ online: false });
+      });
+      // Watch online count
+      db.collection("users").where("online", "==", true).onSnapshot(function(snap) {
+        document.getElementById("online-num").textContent = snap.size + (isAdmin ? 0 : 0);
+      });
+    }
     var currentUser = null;
     var isAdmin = false;
     var isRestricted = false;
@@ -1310,6 +1405,8 @@
         } else {
           document.getElementById("tab-extra").classList.add("locked-tab");
         }
+
+        startPresence(result.id);
 
         // Listen for real-time changes to this user (restriction, special access)
         db.collection("users").doc(result.id).onSnapshot(function(snap) {
@@ -1682,7 +1779,7 @@
           var badges = '';
           if (d.specialAccess) badges += '<span class="badge special">Special</span> ';
           if (d.restricted)    badges += '<span class="badge restricted">Restricted</span>';
-          if (!d.restricted && !d.specialAccess) badges = '<span class="badge online">Active</span>';
+          if (!d.restricted && !d.specialAccess) badges = '<span class="badge ' + (d.online ? 'online' : '') + '">' + (d.online ? '● Online' : 'Offline') + '</span>';
           html += '<tr>' +
             '<td>' + d.username + '</td>' +
             '<td style="color:var(--muted)">' + d.password + '</td>' +
