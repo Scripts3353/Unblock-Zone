@@ -643,6 +643,54 @@
     /* ── SPECIAL ACCESS BADGE on Extra tab ── */
     .locked-tab { opacity: 0.4; pointer-events: none; }
 
+    /* ── LIKE/DISLIKE ── */
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem 0.6rem;
+      border-top: 1px solid var(--border);
+    }
+    .vote-btn {
+      display: flex; align-items: center; gap: 0.3rem;
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted);
+      font-family: 'Rajdhani', sans-serif; font-size: 0.78rem;
+      font-weight: 600; padding: 0.2rem 0.5rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .vote-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .vote-btn.liked  { border-color: #10b981; color: #10b981; background: #10b98115; }
+    .vote-btn.disliked { border-color: #ff4d6d; color: #ff4d6d; background: #ff4d6d15; }
+
+    /* ── BROADCAST POPUP ── */
+    #broadcast-popup {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+    }
+    #broadcast-popup.show { display: flex; animation: fadeIn 0.2s ease; }
+    .broadcast-box {
+      background: var(--card); border: 1px solid var(--accent);
+      border-radius: 14px; padding: 2rem 2.2rem; max-width: 420px;
+      width: 90%; text-align: center;
+      box-shadow: 0 0 40px rgba(0,229,255,0.15), 0 40px 80px rgba(0,0,0,0.6);
+      animation: slideUp 0.2s ease;
+    }
+    .broadcast-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .broadcast-title {
+      font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+      color: var(--accent); letter-spacing: 0.08em; margin-bottom: 0.6rem;
+    }
+    .broadcast-msg { font-size: 0.95rem; color: var(--text); line-height: 1.6; margin-bottom: 1.4rem; }
+    .broadcast-close {
+      background: linear-gradient(135deg, #00e5ff, #7c3aed); border: none;
+      border-radius: 8px; color: #fff; font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+      padding: 0.65rem 1.8rem; cursor: pointer; transition: opacity 0.2s;
+    }
+    .broadcast-close:hover { opacity: 0.85; }
+
     /* ── LOADING / EMPTY ── */
     .status-msg {
       grid-column: 1/-1;
@@ -1000,8 +1048,18 @@
 </head>
 <body>
 
+  <!-- BROADCAST POPUP -->
+  <div id="broadcast-popup">
+    <div class="broadcast-box">
+      <div class="broadcast-icon">📢</div>
+      <div class="broadcast-title" id="broadcast-title">Message from Admin</div>
+      <div class="broadcast-msg" id="broadcast-msg"></div>
+      <button class="broadcast-close" onclick="dismissBroadcast()">Dismiss</button>
+    </div>
+  </div>
+
   <!-- SITE LOCK -->
-  <div id="site-lock" class="hidden">
+  <div id="site-lock" class="hidden" style="z-index:2147483647!important">
     <div class="lock-box">
       <div class="lock-icon">🔒</div>
       <div class="lock-title">Site Locked</div>
@@ -1279,18 +1337,21 @@
       </div>
 
       <!-- Admin Tabs -->
-      <div style="display:flex;border-bottom:1px solid var(--border);padding:0 1.2rem;background:var(--card)">
-        <button class="admin-tab-btn active" id="atab-overview" onclick="switchAdminTab('overview')">Overview</button>
-        <button class="admin-tab-btn" id="atab-users"    onclick="switchAdminTab('users')">Users</button>
-        <button class="admin-tab-btn" id="atab-site"     onclick="switchAdminTab('site')">Site</button>
-        <button class="admin-tab-btn" id="atab-access"   onclick="switchAdminTab('access')">Access</button>
+      <div style="display:flex;border-bottom:1px solid var(--border);padding:0 0.8rem;background:var(--card);overflow-x:auto">
+        <button class="admin-tab-btn active" id="atab-overview"  onclick="switchAdminTab('overview')">Overview</button>
+        <button class="admin-tab-btn" id="atab-users"     onclick="switchAdminTab('users')">Users</button>
+        <button class="admin-tab-btn" id="atab-games"     onclick="switchAdminTab('games')">Games</button>
+        <button class="admin-tab-btn" id="atab-site"      onclick="switchAdminTab('site')">Site</button>
+        <button class="admin-tab-btn" id="atab-broadcast" onclick="switchAdminTab('broadcast')">Broadcast</button>
+        <button class="admin-tab-btn" id="atab-analytics" onclick="switchAdminTab('analytics')">Analytics</button>
+        <button class="admin-tab-btn" id="atab-access"    onclick="switchAdminTab('access')">Access</button>
       </div>
 
       <div class="admin-body">
 
         <!-- OVERVIEW TAB -->
         <div id="atab-overview-content" class="admin-tab-content">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin-bottom:0.5rem">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.7rem;margin-bottom:0.8rem">
             <div class="admin-stat-card">
               <div class="admin-stat-num" id="stat-total">—</div>
               <div class="admin-stat-label">Total Users</div>
@@ -1303,6 +1364,14 @@
               <div class="admin-stat-num" style="color:#ff4d6d" id="stat-restricted">—</div>
               <div class="admin-stat-label">Restricted</div>
             </div>
+            <div class="admin-stat-card" style="border-color:#00e5ff33">
+              <div class="admin-stat-num" style="color:#00e5ff" id="stat-special">—</div>
+              <div class="admin-stat-label">Special Access</div>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Currently Playing</div>
+            <div id="admin-playing" style="font-size:0.82rem;color:var(--muted)">No one is playing right now.</div>
           </div>
           <div class="admin-section">
             <div class="admin-section-title">Recent Activity</div>
@@ -1315,8 +1384,8 @@
           <div class="admin-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
               <div class="admin-section-title" style="margin:0">All Users</div>
-              <input type="text" id="user-search" placeholder="Search users..." oninput="filterUserTable(this.value)"
-                style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.7rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none;width:160px"/>
+              <input type="text" id="user-search" placeholder="Search..." oninput="filterUserTable(this.value)"
+                style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.7rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none;width:140px"/>
             </div>
             <div id="admin-user-list" style="overflow-x:auto">
               <div style="color:var(--muted);font-size:0.85rem">Loading users...</div>
@@ -1324,8 +1393,47 @@
           </div>
         </div>
 
+        <!-- GAMES TAB -->
+        <div id="atab-games-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Add Custom Game</div>
+            <div class="admin-row">
+              <input type="text" id="new-game-name" placeholder="Game name" />
+            </div>
+            <div class="admin-row">
+              <input type="text" id="new-game-url" placeholder="File path (e.g. games/mygame.html)" />
+            </div>
+            <div class="admin-row">
+              <input type="text" id="new-game-cover" placeholder="Cover image URL (optional)" />
+              <button class="admin-btn success" onclick="addCustomGame()">Add Game</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Custom Games</div>
+            <div id="admin-games-list">
+              <div style="color:var(--muted);font-size:0.82rem">Loading...</div>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Pinned Games (shown first)</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">Enter game names to pin to the top of All Games.</div>
+            <div class="admin-row">
+              <input type="text" id="pin-game-input" placeholder="Game name to pin..." />
+              <button class="admin-btn success" onclick="pinGame()">Pin</button>
+            </div>
+            <div id="pinned-list" style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.4rem"></div>
+          </div>
+        </div>
+
         <!-- SITE TAB -->
         <div id="atab-site-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Site Title</div>
+            <div class="admin-row">
+              <input type="text" id="admin-site-title" placeholder="e.g. UnblockZone" />
+              <button class="admin-btn success" onclick="saveSiteTitle()">Save</button>
+            </div>
+          </div>
           <div class="admin-section">
             <div class="admin-section-title">Site Banner</div>
             <div class="admin-row">
@@ -1333,12 +1441,12 @@
             </div>
             <div class="admin-row">
               <select id="banner-color" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.7rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none">
-                <option value="cyan">Cyan (default)</option>
+                <option value="cyan">Cyan</option>
                 <option value="red">Red (warning)</option>
                 <option value="green">Green (success)</option>
                 <option value="yellow">Yellow (notice)</option>
               </select>
-              <button class="admin-btn success" onclick="saveBanner()">Save Banner</button>
+              <button class="admin-btn success" onclick="saveBanner()">Save</button>
               <button class="admin-btn danger" onclick="clearBanner()">Clear</button>
             </div>
           </div>
@@ -1350,10 +1458,10 @@
                 <span class="toggle-label" id="lock-label">Site is unlocked</span>
               </div>
             </div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">Unlock password: <strong style="color:var(--text)">321</strong></div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">Unlock password: <strong style="color:var(--text)">321</strong> — locks instantly for everyone including fullscreen</div>
           </div>
           <div class="admin-section">
-            <div class="admin-section-title">Maintenance Message</div>
+            <div class="admin-section-title">Lock Screen Message</div>
             <div class="admin-row">
               <input type="text" id="admin-maintenance-text" placeholder="Message shown on lock screen..." />
               <button class="admin-btn success" onclick="saveMaintenance()">Save</button>
@@ -1361,11 +1469,52 @@
           </div>
         </div>
 
+        <!-- BROADCAST TAB -->
+        <div id="atab-broadcast-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Send Popup to All Users</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">Shows a popup message to everyone on the site instantly.</div>
+            <div class="admin-row">
+              <input type="text" id="broadcast-title-input" placeholder="Title (e.g. Announcement)" />
+            </div>
+            <div class="admin-row">
+              <input type="text" id="broadcast-msg-input" placeholder="Message..." />
+              <button class="admin-btn success" onclick="sendBroadcast()">Send</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Broadcast History</div>
+            <div id="broadcast-history" style="font-size:0.82rem;color:var(--muted)">No broadcasts yet.</div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div id="atab-analytics-content" class="admin-tab-content" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.8rem">
+            <div class="admin-stat-card">
+              <div class="admin-stat-num" id="stat-total-logins">—</div>
+              <div class="admin-stat-label">Total Logins</div>
+            </div>
+            <div class="admin-stat-card" style="border-color:#a855f733">
+              <div class="admin-stat-num" style="color:#a855f7" id="stat-total-plays">—</div>
+              <div class="admin-stat-label">Games Played</div>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Most Played Games</div>
+            <div id="analytics-top-games" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Most Liked Games</div>
+            <div id="analytics-top-liked" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
+        </div>
+
         <!-- ACCESS TAB -->
         <div id="atab-access-content" class="admin-tab-content" style="display:none">
           <div class="admin-section">
-            <div class="admin-section-title">Give / Revoke Special Access</div>
-            <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">Special access unlocks the Extra tab for a user.</div>
+            <div class="admin-section-title">Special Access</div>
+            <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">Unlocks Extra + YT tabs.</div>
             <div id="access-user-list" style="display:flex;flex-direction:column;gap:0.5rem">
               <div style="color:var(--muted);font-size:0.82rem">Loading...</div>
             </div>
@@ -1373,7 +1522,7 @@
           <div class="admin-section">
             <div class="admin-section-title">Blocked Usernames</div>
             <div class="admin-row">
-              <input type="text" id="blocked-username-input" placeholder="Username to block from registering..." />
+              <input type="text" id="blocked-username-input" placeholder="Username to block..." />
               <button class="admin-btn danger" onclick="addBlockedUsername()">Block</button>
             </div>
             <div id="blocked-list" style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.4rem"></div>
@@ -1496,6 +1645,20 @@
       if (!doc.exists) return;
       var data = doc.data();
 
+      // Site title
+      if (data.siteTitle) {
+        document.title = data.siteTitle;
+        var logoEls = document.querySelectorAll(".logo, .login-logo, .footer-logo");
+        logoEls.forEach(function(el) {
+          if (!el.querySelector("span")) el.textContent = data.siteTitle;
+        });
+      }
+
+      // Pinned games
+      if (data.pinnedGames) {
+        pinnedGames = data.pinnedGames;
+      }
+
       // Banner
       var banner = document.getElementById("site-banner");
       if (data.banner && data.banner.trim()) {
@@ -1514,11 +1677,18 @@
         banner.style.cssText = "";
       }
 
-      // Site lock — don't lock out admin
+      // Site lock — instant, exits fullscreen, works even in game
       var lockToggle = document.getElementById("lock-toggle");
       var lockLabel  = document.getElementById("lock-label");
       if (data.locked && !isAdmin) {
+        // Exit fullscreen first
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        }
         document.getElementById("site-lock").classList.remove("hidden");
+        // Close game modal too
+        var modal = document.getElementById("game-modal");
+        if (modal && modal.classList.contains("open")) closeModal();
         var lockSub = document.querySelector(".lock-sub");
         if (lockSub) lockSub.textContent = data.maintenanceMsg || "This site has been locked by the administrator.";
       } else {
@@ -1528,6 +1698,20 @@
         lockToggle.classList.toggle("on", !!data.locked);
         if (lockLabel) lockLabel.textContent = data.locked ? "Site is LOCKED" : "Site is unlocked";
       }
+    });
+
+    // Broadcast listener — shows popup to all non-admin users
+    db.collection("settings").doc("broadcast").onSnapshot(function(doc) {
+      if (!doc.exists || isAdmin) return;
+      var data = doc.data();
+      if (!data.message) return;
+      var lastSeen = localStorage.getItem("uz_last_broadcast");
+      var bid = String(data.id || "");
+      if (lastSeen === bid) return; // already dismissed
+      window.__lastBroadcastId = bid;
+      document.getElementById("broadcast-title").textContent = data.title || "Announcement";
+      document.getElementById("broadcast-msg").textContent = data.message;
+      document.getElementById("broadcast-popup").classList.add("show");
     });
 
     function tryUnlock() {
@@ -1773,7 +1957,7 @@
         allZones = json.filter(function(z) { return !isBlocked(z); });
 
         // ── CUSTOM GAMES — shown in the Extra tab ──
-        var CUSTOM_GAMES = [
+        var HARDCODED_GAMES = [
           {
             name: "Interstellar",
             url: "games/inter.html",
@@ -1787,7 +1971,11 @@
             custom: true
           }
         ];
-        customGames = CUSTOM_GAMES;
+        // Merge with any games added via admin panel
+        db.collection("settings").doc("customgames").get().then(function(doc) {
+          var adminGames = doc.exists ? (doc.data().games || []) : [];
+          customGames = HARDCODED_GAMES.concat(adminGames);
+        }).catch(function() { customGames = HARDCODED_GAMES; });
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
       } catch(e) {
@@ -1804,10 +1992,24 @@
         return;
       }
 
+      // Apply pinned games — move them to top
+      var pinned = pinnedGames || [];
+      if (pinned.length) {
+        list = list.slice().sort(function(a, b) {
+          var ap = pinned.indexOf(a.name.toLowerCase());
+          var bp = pinned.indexOf(b.name.toLowerCase());
+          if (ap === -1 && bp === -1) return 0;
+          if (ap === -1) return 1;
+          if (bp === -1) return -1;
+          return ap - bp;
+        });
+      }
+
       list.forEach(function(zone) {
+        var gameId = zone.id ? String(zone.id) : zone.name.replace(/\s+/g, '_').toLowerCase();
         var card = document.createElement("div");
         card.className = "game-card";
-        card.onclick = function() { launchGame(zone); };
+        card.id = "card-" + gameId;
 
         var coverSrc = zone.cover
           ? (zone.custom ? zone.cover : zone.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL))
@@ -1819,17 +2021,43 @@
         var placeholderStyle = coverSrc ? ' style="display:none"' : '';
 
         card.innerHTML =
-          '<div class="card-thumb">' +
+          '<div class="card-thumb" onclick="launchGame(window.__zones[\'' + gameId + '\'])" style="cursor:pointer">' +
             imgHTML +
             '<div class="thumb-placeholder"' + placeholderStyle + '></div>' +
             '<div class="play-overlay"><div class="play-btn-icon">&#9654;</div></div>' +
           '</div>' +
-          '<div class="card-info">' +
+          '<div class="card-info" onclick="launchGame(window.__zones[\'' + gameId + '\'])" style="cursor:pointer">' +
             '<div class="card-name">' + zone.name + '</div>' +
             '<div class="card-tag">UnblockZone</div>' +
+          '</div>' +
+          '<div class="card-actions">' +
+            '<button class="vote-btn" id="like-' + gameId + '" onclick="vote(\'' + gameId + '\',\'like\')" title="Like">&#128077; <span id="likes-' + gameId + '">0</span></button>' +
+            '<button class="vote-btn" id="dislike-' + gameId + '" onclick="vote(\'' + gameId + '\',\'dislike\')" title="Dislike">&#128078; <span id="dislikes-' + gameId + '">0</span></button>' +
           '</div>';
 
+        // Store zone reference for onclick
+        if (!window.__zones) window.__zones = {};
+        window.__zones[gameId] = zone;
+
         grid.appendChild(card);
+
+        // Load live vote counts
+        db.collection("votes").doc(gameId).onSnapshot(function(snap) {
+          var data = snap.exists ? snap.data() : {};
+          var likes = data.likes || 0;
+          var dislikes = data.dislikes || 0;
+          var likeEl = document.getElementById("likes-" + gameId);
+          var dislikeEl = document.getElementById("dislikes-" + gameId);
+          if (likeEl) likeEl.textContent = likes;
+          if (dislikeEl) dislikeEl.textContent = dislikes;
+
+          // Highlight user's existing vote
+          var myVote = data.userVotes && currentUser ? data.userVotes[currentUser.id] : null;
+          var likeBtn = document.getElementById("like-" + gameId);
+          var dislikeBtn = document.getElementById("dislike-" + gameId);
+          if (likeBtn) likeBtn.classList.toggle("liked", myVote === "like");
+          if (dislikeBtn) dislikeBtn.classList.toggle("disliked", myVote === "dislike");
+        });
       });
     }
 
@@ -1898,7 +2126,9 @@
     var currentZone = null;
 
     function launchGame(zone) {
+      if (!zone) return;
       currentZone = zone;
+      var gameId = zone.id ? String(zone.id) : zone.name.replace(/\s+/g, '_').toLowerCase();
       var url = zone.url
         ? (zone.custom ? zone.url : zone.url.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL))
         : "";
@@ -1907,27 +2137,25 @@
       document.getElementById("game-modal").classList.add("open");
       document.body.style.overflow = "hidden";
 
+      // Track play count + what user is playing
+      db.collection("gamestats").doc(gameId).set({ name: zone.name, plays: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+      if (currentUser) db.collection("users").doc(currentUser.id).update({ currentGame: zone.name });
+
       var frame = document.getElementById("game-frame");
       frame.src = "";
-
       if (!url) return;
 
-      // Fetch the HTML and create a blob so the browser renders it correctly
       fetch(url)
         .then(function(res) { return res.text(); })
         .then(function(html) {
-          // Strip gn-math promo popups/banners before rendering
           html = stripPromos(html);
           var blob = new Blob([html], { type: "text/html" });
           var blobUrl = URL.createObjectURL(blob);
-          // Revoke the previous blob if any
           if (frame._blobUrl) URL.revokeObjectURL(frame._blobUrl);
           frame._blobUrl = blobUrl;
           frame.src = blobUrl;
         })
-        .catch(function() {
-          frame.src = url; // fallback — try direct
-        });
+        .catch(function() { frame.src = url; });
     }
 
     function closeModal() {
@@ -1936,6 +2164,7 @@
       if (frame._blobUrl) { URL.revokeObjectURL(frame._blobUrl); frame._blobUrl = null; }
       frame.src = "";
       document.body.style.overflow = "";
+      if (currentUser) db.collection("users").doc(currentUser.id).update({ currentGame: null });
       currentZone = null;
     }
 
@@ -2022,6 +2251,8 @@
     // ── ADMIN ──
     var allUsersCache = [];
     var blockedUsernames = [];
+    var pinnedGames = [];
+    var adminCustomGames = [];
 
     function openAdmin() {
       document.getElementById("admin-overlay").classList.add("open");
@@ -2032,82 +2263,71 @@
     }
 
     function switchAdminTab(tab) {
-      ['overview','users','site','access'].forEach(function(t) {
+      ['overview','users','games','site','broadcast','analytics','access'].forEach(function(t) {
         document.getElementById('atab-' + t).classList.toggle('active', t === tab);
         document.getElementById('atab-' + t + '-content').style.display = t === tab ? 'block' : 'none';
       });
       if (tab === 'access') renderAccessList();
       if (tab === 'users') renderUserTable(allUsersCache);
+      if (tab === 'analytics') loadAnalytics();
+      if (tab === 'games') loadAdminGames();
+      if (tab === 'broadcast') loadBroadcastHistory();
     }
 
     function loadAdminData() {
-      // Load site settings
       db.collection("settings").doc("site").get().then(function(doc) {
         if (!doc.exists) return;
         var d = doc.data();
         if (d.banner) document.getElementById("admin-banner-text").value = d.banner;
         if (d.maintenanceMsg) document.getElementById("admin-maintenance-text").value = d.maintenanceMsg;
-        if (d.blockedUsernames) {
-          blockedUsernames = d.blockedUsernames;
-          renderBlockedList();
-        }
+        if (d.siteTitle) document.getElementById("admin-site-title").value = d.siteTitle;
+        if (d.blockedUsernames) { blockedUsernames = d.blockedUsernames; renderBlockedList(); }
+        if (d.pinnedGames) { pinnedGames = d.pinnedGames; renderPinnedList(); }
       });
-
-      // Live user stats + table
       db.collection("users").onSnapshot(function(snap) {
-        allUsersCache = snap.docs.map(function(d) { return { id: d.id, ...d.data() }; });
+        allUsersCache = snap.docs.map(function(d) { var o = d.data(); o.id = d.id; return o; });
         var online = allUsersCache.filter(function(u) { return u.online; }).length;
         var restricted = allUsersCache.filter(function(u) { return u.restricted; }).length;
-        document.getElementById("stat-total").textContent = allUsersCache.length;
-        document.getElementById("stat-online").textContent = online;
-        document.getElementById("stat-restricted").textContent = restricted;
+        var special = allUsersCache.filter(function(u) { return u.specialAccess; }).length;
+        var el = function(id) { return document.getElementById(id); };
+        if (el("stat-total")) el("stat-total").textContent = allUsersCache.length;
+        if (el("stat-online")) el("stat-online").textContent = online;
+        if (el("stat-restricted")) el("stat-restricted").textContent = restricted;
+        if (el("stat-special")) el("stat-special").textContent = special;
         document.getElementById("online-num").textContent = online;
-
-        // Recent activity (last 5 seen)
-        var sorted = allUsersCache.slice().sort(function(a, b) {
-          var at = a.lastSeen ? a.lastSeen.seconds : 0;
-          var bt = b.lastSeen ? b.lastSeen.seconds : 0;
-          return bt - at;
-        }).slice(0, 5);
+        var playing = allUsersCache.filter(function(u) { return u.online && u.currentGame; });
+        var playingHtml = playing.length ? playing.map(function(u) {
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span><span style="color:#10b981">●</span> <strong>' + u.username + '</strong></span><span style="color:var(--accent);font-size:0.78rem">🎮 ' + u.currentGame + '</span></div>';
+        }).join('') : '<span style="color:var(--muted)">No one is playing right now.</span>';
+        if (el("admin-playing")) el("admin-playing").innerHTML = playingHtml;
+        var sorted = allUsersCache.slice().sort(function(a,b) { return (b.lastSeen?b.lastSeen.seconds:0)-(a.lastSeen?a.lastSeen.seconds:0); }).slice(0,8);
         var recentHtml = sorted.map(function(u) {
-          var t = u.lastSeen ? new Date(u.lastSeen.seconds * 1000).toLocaleString() : "Never";
+          var t = u.lastSeen ? new Date(u.lastSeen.seconds*1000).toLocaleString() : "Never";
           var dot = u.online ? '<span style="color:#10b981">●</span>' : '<span style="color:var(--muted)">○</span>';
-          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)">' +
-            '<span>' + dot + ' <strong>' + u.username + '</strong></span>' +
-            '<span style="color:var(--muted);font-size:0.75rem">' + t + '</span>' +
-            '</div>';
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span>' + dot + ' <strong>' + u.username + '</strong>' + (u.currentGame ? ' <span style="font-size:0.72rem;color:var(--accent)">▶ ' + u.currentGame + '</span>' : '') + '</span><span style="color:var(--muted);font-size:0.75rem">' + t + '</span></div>';
         }).join('');
-        document.getElementById("admin-recent").innerHTML = recentHtml || '<span style="color:var(--muted)">No activity yet.</span>';
-
-        // Re-render current tab
-        var activeTab = document.querySelector('.admin-tab-btn.active');
-        if (activeTab && activeTab.id === 'atab-users') renderUserTable(allUsersCache);
-        if (activeTab && activeTab.id === 'atab-access') renderAccessList();
+        if (el("admin-recent")) el("admin-recent").innerHTML = recentHtml || '<span style="color:var(--muted)">No activity yet.</span>';
+        var activeAdminTab = document.querySelector('.admin-tab-btn.active');
+        if (activeAdminTab && activeAdminTab.id === 'atab-users') renderUserTable(allUsersCache);
+        if (activeAdminTab && activeAdminTab.id === 'atab-access') renderAccessList();
       });
     }
 
     function renderUserTable(users) {
       var container = document.getElementById("admin-user-list");
-      if (!users || !users.length) {
-        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem">No users yet.</div>';
-        return;
-      }
-      var html = '<table class="user-table"><thead><tr>' +
-        '<th>User</th><th>Password</th><th>Status</th><th>Last Seen</th><th>Actions</th>' +
-        '</tr></thead><tbody>';
+      if (!users || !users.length) { container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem">No users yet.</div>'; return; }
+      var html = '<table class="user-table"><thead><tr><th>User</th><th>Password</th><th>Status</th><th>Playing</th><th>Last Seen</th><th>Actions</th></tr></thead><tbody>';
       users.forEach(function(u) {
-        var lastSeen = u.lastSeen ? new Date(u.lastSeen.seconds * 1000).toLocaleString() : "Never";
-        var status = u.restricted ? '<span class="badge restricted">Restricted</span>' :
-          u.online ? '<span class="badge online">● Online</span>' :
-          u.specialAccess ? '<span class="badge special">Special</span>' :
-          '<span style="color:var(--muted);font-size:0.75rem">Offline</span>';
+        var lastSeen = u.lastSeen ? new Date(u.lastSeen.seconds*1000).toLocaleString() : "Never";
+        var status = u.restricted ? '<span class="badge restricted">Restricted</span>' : u.online ? '<span class="badge online">● Online</span>' : u.specialAccess ? '<span class="badge special">Special</span>' : '<span style="color:var(--muted);font-size:0.75rem">Offline</span>';
         html += '<tr>' +
           '<td><strong>' + u.username + '</strong></td>' +
           '<td style="color:var(--muted)">' + u.password + '</td>' +
           '<td>' + status + '</td>' +
+          '<td style="color:var(--accent);font-size:0.75rem">' + (u.currentGame||'\u2014') + '</td>' +
           '<td style="color:var(--muted);font-size:0.75rem">' + lastSeen + '</td>' +
           '<td style="display:flex;gap:0.3rem;flex-wrap:wrap">' +
-            '<button class="admin-btn ' + (u.restricted ? 'success' : 'danger') + '" onclick="toggleRestrict(\'' + u.id + '\',' + !!u.restricted + ')">' + (u.restricted ? 'Unrestrict' : 'Restrict') + '</button>' +
+            '<button class="admin-btn ' + (u.restricted?'success':'danger') + '" onclick="toggleRestrict(\'' + u.id + '\',' + !!u.restricted + ')">' + (u.restricted?'Unrestrict':'Restrict') + '</button>' +
             '<button class="admin-btn danger" onclick="deleteUser(\'' + u.id + '\',\'' + u.username + '\')">Delete</button>' +
           '</td>' +
         '</tr>';
@@ -2117,7 +2337,7 @@
     }
 
     function filterUserTable(q) {
-      var filtered = q ? allUsersCache.filter(function(u) { return u.username.toLowerCase().includes(q.toLowerCase()); }) : allUsersCache;
+      var filtered = q ? allUsersCache.filter(function(u){return u.username.toLowerCase().includes(q.toLowerCase());}) : allUsersCache;
       renderUserTable(filtered);
     }
 
@@ -2127,75 +2347,181 @@
       container.innerHTML = allUsersCache.map(function(u) {
         return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border)">' +
           '<span style="font-size:0.85rem">' + u.username + (u.specialAccess ? ' <span class="badge special">Special</span>' : '') + '</span>' +
-          '<button class="admin-btn ' + (u.specialAccess ? 'danger' : 'success') + '" onclick="toggleSpecial(\'' + u.id + '\',' + !!u.specialAccess + ')">' +
-            (u.specialAccess ? 'Revoke' : 'Grant Access') +
-          '</button>' +
+          '<button class="admin-btn ' + (u.specialAccess?'danger':'success') + '" onclick="toggleSpecial(\'' + u.id + '\',' + !!u.specialAccess + ')">' + (u.specialAccess?'Revoke':'Grant') + '</button>' +
         '</div>';
       }).join('');
     }
 
-    function renderBlockedList() {
-      var container = document.getElementById("blocked-list");
-      if (!blockedUsernames.length) { container.innerHTML = '<span style="color:var(--muted);font-size:0.78rem">No blocked usernames.</span>'; return; }
-      container.innerHTML = blockedUsernames.map(function(name) {
-        return '<span style="background:var(--surface);border:1px solid #ff4d6d44;border-radius:5px;padding:0.2rem 0.6rem;font-size:0.78rem;color:#ff4d6d;display:flex;align-items:center;gap:0.4rem">' +
-          name + '<button onclick="removeBlockedUsername(\'' + name + '\')" style="background:none;border:none;color:#ff4d6d;cursor:pointer;font-size:0.9rem;padding:0">&#x2715;</button>' +
-        '</span>';
+    function loadAdminGames() {
+      db.collection("settings").doc("customgames").get().then(function(doc) {
+        adminCustomGames = doc.exists ? (doc.data().games||[]) : [];
+        renderAdminGamesList();
+      });
+    }
+    function renderAdminGamesList() {
+      var container = document.getElementById("admin-games-list");
+      if (!adminCustomGames.length) { container.innerHTML = '<div style="color:var(--muted);font-size:0.82rem">No custom games added.</div>'; return; }
+      container.innerHTML = adminCustomGames.map(function(g,i) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border)"><span style="font-size:0.85rem"><strong>' + g.name + '</strong> <span style="color:var(--muted);font-size:0.75rem">' + g.url + '</span></span><button class="admin-btn danger" onclick="removeCustomGame('+i+')">Remove</button></div>';
       }).join('');
     }
+    function addCustomGame() {
+      var name = document.getElementById("new-game-name").value.trim();
+      var url = document.getElementById("new-game-url").value.trim();
+      var cover = document.getElementById("new-game-cover").value.trim();
+      if (!name||!url) return;
+      adminCustomGames.push({name:name,url:url,cover:cover||"",custom:true});
+      db.collection("settings").doc("customgames").set({games:adminCustomGames});
+      document.getElementById("new-game-name").value="";
+      document.getElementById("new-game-url").value="";
+      document.getElementById("new-game-cover").value="";
+      renderAdminGamesList();
+      loadGames();
+    }
+    function removeCustomGame(i) {
+      adminCustomGames.splice(i,1);
+      db.collection("settings").doc("customgames").set({games:adminCustomGames});
+      renderAdminGamesList();
+      loadGames();
+    }
 
+    function renderPinnedList() {
+      var container = document.getElementById("pinned-list");
+      if (!container) return;
+      if (!pinnedGames.length) { container.innerHTML = '<span style="color:var(--muted);font-size:0.78rem">No pinned games.</span>'; return; }
+      container.innerHTML = pinnedGames.map(function(name) {
+        return '<span style="background:var(--surface);border:1px solid var(--accent);border-radius:5px;padding:0.2rem 0.6rem;font-size:0.78rem;color:var(--accent);display:flex;align-items:center;gap:0.4rem">' + name + '<button onclick="unpinGame(\''+name+'\')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.9rem;padding:0">&#x2715;</button></span>';
+      }).join('');
+    }
+    function pinGame() {
+      var val = document.getElementById("pin-game-input").value.trim().toLowerCase();
+      if (!val||pinnedGames.includes(val)) return;
+      pinnedGames.push(val);
+      document.getElementById("pin-game-input").value="";
+      db.collection("settings").doc("site").set({pinnedGames:pinnedGames},{merge:true});
+      renderPinnedList();
+      renderGames(activeTab==='extra'?customGames:allZones);
+    }
+    function unpinGame(name) {
+      pinnedGames = pinnedGames.filter(function(n){return n!==name;});
+      db.collection("settings").doc("site").set({pinnedGames:pinnedGames},{merge:true});
+      renderPinnedList();
+      renderGames(activeTab==='extra'?customGames:allZones);
+    }
+
+    function sendBroadcast() {
+      var title = document.getElementById("broadcast-title-input").value.trim();
+      var msg = document.getElementById("broadcast-msg-input").value.trim();
+      if (!msg) return;
+      db.collection("settings").doc("broadcast").set({title:title||"Announcement",message:msg,sentAt:firebase.firestore.FieldValue.serverTimestamp(),id:Date.now()});
+      document.getElementById("broadcast-title-input").value="";
+      document.getElementById("broadcast-msg-input").value="";
+    }
+    function loadBroadcastHistory() {
+      db.collection("settings").doc("broadcast").get().then(function(doc) {
+        var container = document.getElementById("broadcast-history");
+        if (!doc.exists||!doc.data().message) { container.innerHTML='<span style="color:var(--muted)">No broadcasts yet.</span>'; return; }
+        var d = doc.data();
+        var t = d.sentAt ? new Date(d.sentAt.seconds*1000).toLocaleString() : "";
+        container.innerHTML = '<div style="padding:0.5rem 0;font-size:0.82rem"><strong>' + d.title + '</strong> — ' + d.message + '<span style="color:var(--muted);font-size:0.75rem;margin-left:0.5rem">' + t + '</span></div>';
+      });
+    }
+    function dismissBroadcast() {
+      document.getElementById("broadcast-popup").classList.remove("show");
+      localStorage.setItem("uz_last_broadcast", window.__lastBroadcastId||"");
+    }
+
+    function loadAnalytics() {
+      db.collection("gamestats").orderBy("plays","desc").limit(10).get().then(function(snap) {
+        var container = document.getElementById("analytics-top-games");
+        if (!container) return;
+        var totalPlays = 0;
+        var html = snap.docs.map(function(doc,i) {
+          var d = doc.data(); totalPlays += d.plays||0;
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span style="font-size:0.82rem"><strong>#'+(i+1)+'</strong> '+d.name+'</span><span style="color:var(--accent);font-size:0.78rem">'+(d.plays||0)+' plays</span></div>';
+        }).join('');
+        container.innerHTML = html||'<span style="color:var(--muted)">No data yet.</span>';
+        var tpEl=document.getElementById("stat-total-plays"); if(tpEl) tpEl.textContent=totalPlays;
+        var tlEl=document.getElementById("stat-total-logins"); if(tlEl) tlEl.textContent=allUsersCache.length;
+      });
+      db.collection("votes").get().then(function(snap) {
+        var liked=[];
+        snap.docs.forEach(function(doc) { var d=doc.data(); if(d.likes>0) liked.push({name:doc.id.replace(/_/g,' '),likes:d.likes,dislikes:d.dislikes||0}); });
+        liked.sort(function(a,b){return b.likes-a.likes;});
+        var container=document.getElementById("analytics-top-liked"); if(!container) return;
+        var html=liked.slice(0,10).map(function(g,i){return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)"><span style="font-size:0.82rem"><strong>#'+(i+1)+'</strong> '+g.name+'</span><span style="font-size:0.78rem"><span style="color:#10b981">👍 '+g.likes+'</span> <span style="color:#ff4d6d;margin-left:0.5rem">👎 '+g.dislikes+'</span></span></div>';}).join('');
+        container.innerHTML=html||'<span style="color:var(--muted)">No votes yet.</span>';
+      });
+    }
+
+    function saveSiteTitle() {
+      var title = document.getElementById("admin-site-title").value.trim();
+      if (!title) return;
+      db.collection("settings").doc("site").set({siteTitle:title},{merge:true});
+    }
+
+    function renderBlockedList() {
+      var container = document.getElementById("blocked-list");
+      if (!container) return;
+      if (!blockedUsernames.length) { container.innerHTML='<span style="color:var(--muted);font-size:0.78rem">No blocked usernames.</span>'; return; }
+      container.innerHTML = blockedUsernames.map(function(name) {
+        return '<span style="background:var(--surface);border:1px solid #ff4d6d44;border-radius:5px;padding:0.2rem 0.6rem;font-size:0.78rem;color:#ff4d6d;display:flex;align-items:center;gap:0.4rem">'+name+'<button onclick="removeBlockedUsername(\''+name+'\')" style="background:none;border:none;color:#ff4d6d;cursor:pointer;font-size:0.9rem;padding:0">&#x2715;</button></span>';
+      }).join('');
+    }
     function addBlockedUsername() {
-      var val = document.getElementById("blocked-username-input").value.trim().toLowerCase();
-      if (!val || blockedUsernames.includes(val)) return;
+      var val=document.getElementById("blocked-username-input").value.trim().toLowerCase();
+      if (!val||blockedUsernames.includes(val)) return;
       blockedUsernames.push(val);
-      document.getElementById("blocked-username-input").value = "";
-      db.collection("settings").doc("site").set({ blockedUsernames: blockedUsernames }, { merge: true });
+      document.getElementById("blocked-username-input").value="";
+      db.collection("settings").doc("site").set({blockedUsernames:blockedUsernames},{merge:true});
       renderBlockedList();
     }
     function removeBlockedUsername(name) {
-      blockedUsernames = blockedUsernames.filter(function(n) { return n !== name; });
-      db.collection("settings").doc("site").set({ blockedUsernames: blockedUsernames }, { merge: true });
+      blockedUsernames=blockedUsernames.filter(function(n){return n!==name;});
+      db.collection("settings").doc("site").set({blockedUsernames:blockedUsernames},{merge:true});
       renderBlockedList();
     }
 
-    function toggleRestrict(id, current) {
-      db.collection("users").doc(id).update({ restricted: !current });
-    }
-    function toggleSpecial(id, current) {
-      db.collection("users").doc(id).update({ specialAccess: !current });
-    }
-    function deleteUser(id, username) {
-      if (confirm("Delete " + username + "? They will need to re-register.")) {
-        db.collection("users").doc(id).delete();
-      }
+    function toggleRestrict(id,current) { db.collection("users").doc(id).update({restricted:!current}); }
+    function toggleSpecial(id,current)  { db.collection("users").doc(id).update({specialAccess:!current}); }
+    function deleteUser(id,username) {
+      if (confirm("Delete "+username+"?")) db.collection("users").doc(id).delete();
     }
 
     function saveBanner() {
-      var text = document.getElementById("admin-banner-text").value.trim();
-      var color = document.getElementById("banner-color").value;
-      db.collection("settings").doc("site").set({ banner: text, bannerColor: color }, { merge: true });
+      db.collection("settings").doc("site").set({banner:document.getElementById("admin-banner-text").value.trim(),bannerColor:document.getElementById("banner-color").value},{merge:true});
     }
     function clearBanner() {
-      document.getElementById("admin-banner-text").value = "";
-      db.collection("settings").doc("site").set({ banner: "" }, { merge: true });
+      document.getElementById("admin-banner-text").value="";
+      db.collection("settings").doc("site").set({banner:""},{merge:true});
     }
     function saveMaintenance() {
-      var text = document.getElementById("admin-maintenance-text").value.trim();
-      db.collection("settings").doc("site").set({ maintenanceMsg: text }, { merge: true });
+      db.collection("settings").doc("site").set({maintenanceMsg:document.getElementById("admin-maintenance-text").value.trim()},{merge:true});
     }
     function toggleSiteLock() {
       db.collection("settings").doc("site").get().then(function(doc) {
-        var current = doc.exists ? !!doc.data().locked : false;
-        db.collection("settings").doc("site").set({ locked: !current }, { merge: true });
+        var current=doc.exists?!!doc.data().locked:false;
+        db.collection("settings").doc("site").set({locked:!current},{merge:true});
+      });
+    }
+
+    function vote(gameId,type) {
+      if (!currentUser) return;
+      var ref=db.collection("votes").doc(gameId);
+      ref.get().then(function(doc) {
+        var data=doc.exists?doc.data():{likes:0,dislikes:0,userVotes:{}};
+        var userVotes=data.userVotes||{};
+        var prev=userVotes[currentUser.id];
+        var likes=data.likes||0, dislikes=data.dislikes||0;
+        if (prev===type) { userVotes[currentUser.id]=null; if(type==="like") likes=Math.max(0,likes-1); else dislikes=Math.max(0,dislikes-1); }
+        else { if(prev==="like") likes=Math.max(0,likes-1); if(prev==="dislike") dislikes=Math.max(0,dislikes-1); userVotes[currentUser.id]=type; if(type==="like") likes++; else dislikes++; }
+        ref.set({likes:likes,dislikes:dislikes,userVotes:userVotes},{merge:true});
       });
     }
 
     // Logout
     function doLogout() {
-      if (confirm("Log out?")) {
-        localStorage.removeItem("uz_session");
-        location.reload();
-      }
+      if (confirm("Log out?")) { localStorage.removeItem("uz_session"); location.reload(); }
     }
 
     // Restore saved settings on load
