@@ -410,6 +410,27 @@
       letter-spacing: 0.05em;
     }
 
+    /* ── YT CARDS ── */
+    .yt-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .yt-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px rgba(0,229,255,0.1);
+    }
+    .yt-thumb {
+      aspect-ratio: 16/9;
+      position: relative;
+    }
+    .yt-thumb iframe {
+      width: 100%; height: 100%; border: none; display: block;
+    }
+
     /* ── TABS ── */
     .tabs {
       display: flex;
@@ -1096,9 +1117,71 @@
     <div class="tabs">
       <button class="tab-btn active" id="tab-all"   onclick="switchTab('all')">All Games</button>
       <button class="tab-btn locked-tab" id="tab-extra" onclick="switchTab('extra')">Extra</button>
+      <button class="tab-btn locked-tab" id="tab-yt"    onclick="switchTab('yt')">YT</button>
     </div>
     <div class="game-grid" id="game-grid">
       <div class="status-msg"><span class="loading-dots">Loading games</span></div>
+    </div>
+
+    <!-- YT TAB CONTENT -->
+    <div id="yt-content" style="display:none">
+
+      <!-- YT sub-tabs -->
+      <div style="display:flex;gap:0.3rem;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:0">
+        <button class="tab-btn active" id="yt-tab-videos" onclick="switchYtTab('videos')">Videos</button>
+        <button class="tab-btn" id="yt-tab-embedder" onclick="switchYtTab('embedder')">Video Embedder</button>
+      </div>
+
+      <!-- Videos section -->
+      <div id="yt-videos-content">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem">
+          <div class="yt-card">
+            <div class="yt-thumb">
+              <iframe src="https://www.youtube.com/embed/AoN1K4c7VKE" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="yt-card">
+            <div class="yt-thumb">
+              <iframe src="https://www.youtube.com/embed/9WEQts7b8Pw" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="yt-card">
+            <div class="yt-thumb">
+              <iframe src="https://www.youtube.com/embed/pAnGwRiQ4-4" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="yt-card">
+            <div class="yt-thumb">
+              <iframe src="https://www.youtube.com/embed/QJI0an6irrA" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="yt-card">
+            <div class="yt-thumb">
+              <iframe src="https://www.youtube.com/embed/ZFoNBxpXen4" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Embedder section -->
+      <div id="yt-embedder-content" style="display:none">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem">
+          <div style="font-family:'Orbitron',sans-serif;font-size:0.7rem;letter-spacing:0.15em;color:var(--accent);margin-bottom:0.8rem">// Paste a YouTube URL</div>
+          <div style="display:flex;gap:0.6rem">
+            <input type="text" id="yt-url-input" placeholder="https://www.youtube.com/watch?v=..." onkeydown="if(event.key==='Enter')embedYt()"
+              style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'" />
+            <button onclick="embedYt()" style="background:linear-gradient(135deg,#00e5ff,#7c3aed);border:none;border-radius:8px;color:#fff;font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;padding:0.6rem 1.2rem;cursor:pointer;white-space:nowrap;transition:opacity 0.2s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Embed</button>
+          </div>
+          <div id="yt-embed-error" style="font-size:0.8rem;color:#ff4d6d;margin-top:0.5rem;display:none">Invalid YouTube URL. Try: youtube.com/watch?v=... or youtu.be/...</div>
+        </div>
+        <div id="yt-embed-result" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <div style="aspect-ratio:16/9">
+            <iframe id="yt-embed-frame" src="" allowfullscreen style="width:100%;height:100%;border:none;display:block"></iframe>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -1546,9 +1629,9 @@
 
         // Unlock Extra tab if special access
         if (hasSpecialAccess) {
-          document.getElementById("tab-extra").classList.remove("locked-tab");
+          document.getElementById("tab-extra").classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
         } else {
-          document.getElementById("tab-extra").classList.add("locked-tab");
+          document.getElementById("tab-extra").classList.add("locked-tab"); document.getElementById("tab-yt").classList.add("locked-tab");
         }
 
         startPresence(result.id);
@@ -1566,9 +1649,9 @@
           hasSpecialAccess = !!d.specialAccess;
           var tabExtra = document.getElementById("tab-extra");
           if (hasSpecialAccess) {
-            tabExtra.classList.remove("locked-tab");
+            tabExtra.classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
           } else {
-            tabExtra.classList.add("locked-tab");
+            tabExtra.classList.add("locked-tab"); document.getElementById("tab-yt").classList.add("locked-tab");
             if (activeTab === 'extra') switchTab('all');
           }
         });
@@ -1603,11 +1686,57 @@
       activeTab = tab;
       document.getElementById('tab-all').classList.toggle('active', tab === 'all');
       document.getElementById('tab-extra').classList.toggle('active', tab === 'extra');
-      if (tab === 'extra') {
-        renderGames(customGames);
+      document.getElementById('tab-yt').classList.toggle('active', tab === 'yt');
+
+      var gameGrid  = document.getElementById('game-grid');
+      var ytContent = document.getElementById('yt-content');
+
+      if (tab === 'yt') {
+        gameGrid.style.display = 'none';
+        ytContent.style.display = 'block';
       } else {
-        renderGames(allZones);
+        gameGrid.style.display = 'grid';
+        ytContent.style.display = 'none';
+        if (tab === 'extra') renderGames(customGames);
+        else renderGames(allZones);
       }
+    }
+
+    function switchYtTab(sub) {
+      document.getElementById('yt-tab-videos').classList.toggle('active', sub === 'videos');
+      document.getElementById('yt-tab-embedder').classList.toggle('active', sub === 'embedder');
+      document.getElementById('yt-videos-content').style.display   = sub === 'videos'   ? 'block' : 'none';
+      document.getElementById('yt-embedder-content').style.display = sub === 'embedder' ? 'block' : 'none';
+    }
+
+    function embedYt() {
+      var input = document.getElementById('yt-url-input').value.trim();
+      var err   = document.getElementById('yt-embed-error');
+      var result = document.getElementById('yt-embed-result');
+      var frame  = document.getElementById('yt-embed-frame');
+      err.style.display = 'none';
+
+      // Extract video ID from various YouTube URL formats
+      var id = null;
+      var patterns = [
+        /[?&]v=([a-zA-Z0-9_-]{11})/,
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        /embed\/([a-zA-Z0-9_-]{11})/,
+        /shorts\/([a-zA-Z0-9_-]{11})/
+      ];
+      for (var i = 0; i < patterns.length; i++) {
+        var m = input.match(patterns[i]);
+        if (m) { id = m[1]; break; }
+      }
+
+      if (!id) {
+        err.style.display = 'block';
+        result.style.display = 'none';
+        return;
+      }
+
+      frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+      result.style.display = 'block';
     }
 
     // ── BLOCKLIST ──
@@ -2112,7 +2241,7 @@
               currentUser = { id: session.id, ...d };
               hasSpecialAccess = !!d.specialAccess;
               document.getElementById("login-overlay").classList.add("hidden");
-              if (hasSpecialAccess) document.getElementById("tab-extra").classList.remove("locked-tab");
+              if (hasSpecialAccess) document.getElementById("tab-extra").classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
               startPresence(session.id);
               // Watch for real-time changes
               db.collection("users").doc(session.id).onSnapshot(function(snap) {
@@ -2126,8 +2255,8 @@
                 hideRestricted();
                 hasSpecialAccess = !!d2.specialAccess;
                 var tabExtra = document.getElementById("tab-extra");
-                if (hasSpecialAccess) tabExtra.classList.remove("locked-tab");
-                else { tabExtra.classList.add("locked-tab"); if (activeTab === 'extra') switchTab('all'); }
+                if (hasSpecialAccess) tabExtra.classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
+                else { tabExtra.classList.add("locked-tab"); document.getElementById("tab-yt").classList.add("locked-tab"); if (activeTab === 'extra') switchTab('all'); }
               });
             }).catch(function() { localStorage.removeItem("uz_session"); });
           }
