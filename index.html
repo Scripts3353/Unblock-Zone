@@ -1359,6 +1359,7 @@
         });
       }).then(function(ref) {
         currentUser = { id: ref.id, username: username, password: password, restricted: false, specialAccess: false };
+        localStorage.setItem("uz_session", JSON.stringify({ id: ref.id, username: username }));
         btn.classList.remove("loading"); btn.disabled = false;
         document.getElementById("login-overlay").classList.add("hidden");
         startPresence(ref.id);
@@ -1465,6 +1466,7 @@
           adminBtn.removeAttribute("style");
           adminBtn.style.display = "flex";
           btn.classList.remove("loading"); btn.disabled = false;
+          localStorage.setItem("uz_session", JSON.stringify({ id: "admin", username: "lukas", isAdmin: true }));
           loadAdminData();
           // Watch online count for admin too
           db.collection("users").where("online", "==", true).onSnapshot(function(snap) {
@@ -1520,6 +1522,9 @@
           currentUser = null;
           return;
         }
+
+        // Save session
+        localStorage.setItem("uz_session", JSON.stringify({ id: result.id, username: result.data.username }));
 
         document.getElementById("login-overlay").classList.add("hidden");
 
@@ -2039,7 +2044,10 @@
 
     // Logout
     function doLogout() {
-      if (confirm("Log out?")) location.reload();
+      if (confirm("Log out?")) {
+        localStorage.removeItem("uz_session");
+        location.reload();
+      }
     }
 
     // Restore saved settings on load
@@ -2053,6 +2061,57 @@
 
     // ── BOOT ──
     restoreSettings();
+
+    // Auto-login from saved session
+    (function() {
+      var saved = localStorage.getItem("uz_session");
+      if (saved) {
+        try {
+          var session = JSON.parse(saved);
+          if (session.isAdmin) {
+            // Admin session
+            isAdmin = true;
+            document.getElementById("login-overlay").classList.add("hidden");
+            var adminBtn = document.getElementById("admin-btn");
+            adminBtn.removeAttribute("style");
+            adminBtn.style.display = "flex";
+            loadAdminData();
+            db.collection("users").where("online", "==", true).onSnapshot(function(snap) {
+              document.getElementById("online-num").textContent = snap.size;
+            });
+            return;
+          }
+          if (session.id) {
+            db.collection("users").doc(session.id).get().then(function(doc) {
+              if (!doc.exists) { localStorage.removeItem("uz_session"); return; }
+              var d = doc.data();
+              if (d.restricted) {
+                localStorage.removeItem("uz_session");
+                document.getElementById("login-overlay").classList.add("restricted");
+                return;
+              }
+              // Valid session — log in silently
+              currentUser = { id: session.id, ...d };
+              hasSpecialAccess = !!d.specialAccess;
+              document.getElementById("login-overlay").classList.add("hidden");
+              if (hasSpecialAccess) document.getElementById("tab-extra").classList.remove("locked-tab");
+              startPresence(session.id);
+              // Watch for real-time changes
+              db.collection("users").doc(session.id).onSnapshot(function(snap) {
+                if (!snap.exists) { localStorage.removeItem("uz_session"); location.reload(); return; }
+                var d2 = snap.data();
+                if (d2.restricted) { localStorage.removeItem("uz_session"); location.reload(); return; }
+                hasSpecialAccess = !!d2.specialAccess;
+                var tabExtra = document.getElementById("tab-extra");
+                if (hasSpecialAccess) tabExtra.classList.remove("locked-tab");
+                else { tabExtra.classList.add("locked-tab"); if (activeTab === 'extra') switchTab('all'); }
+              });
+            }).catch(function() { localStorage.removeItem("uz_session"); });
+          }
+        } catch(e) { localStorage.removeItem("uz_session"); }
+      }
+    })();
+
     loadGames();
   </script>
 </body>
