@@ -1328,9 +1328,9 @@
     // ── LOGIN ──
     // ── LOGIN UI TOGGLE ──
     function showRestricted() {
-      localStorage.removeItem("uz_session");
-      var el = document.getElementById("restricted-overlay");
-      el.style.display = "flex";
+      // Don't clear session — we need it to watch for unrestriction in real time
+      document.getElementById("login-overlay").classList.add("hidden");
+      document.getElementById("restricted-overlay").style.display = "flex";
     }
     function hideRestricted() {
       document.getElementById("restricted-overlay").style.display = "none";
