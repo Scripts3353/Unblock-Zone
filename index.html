@@ -1041,6 +1041,16 @@
 
   </div>
 
+  <!-- RESTRICTED SCREEN -->
+  <div id="restricted-overlay" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(20,0,0,0.98);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+    <div style="background:#1a0a0a;border:1px solid #ff4d6d;border-radius:14px;padding:2.5rem 2.2rem;max-width:400px;width:90%;text-align:center;box-shadow:0 0 60px rgba(255,77,109,0.3),0 40px 100px rgba(0,0,0,0.8)">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.5rem">🚫</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;color:#ff4d6d;letter-spacing:0.06em;margin-bottom:0.5rem">Account Restricted</div>
+      <div style="font-size:0.88rem;color:#884455;line-height:1.6;margin-bottom:1.8rem">Your account has been restricted by an administrator. You cannot access this site.</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:0.78rem;color:#663344;letter-spacing:0.05em">Contact the site admin if you believe this is a mistake.</div>
+    </div>
+  </div>
+
   <!-- NOTICE OVERLAY -->
   <div id="notice-overlay">
     <div class="notice-box">
@@ -1317,6 +1327,14 @@
   <script>
     // ── LOGIN ──
     // ── LOGIN UI TOGGLE ──
+    function showRestricted() {
+      localStorage.removeItem("uz_session");
+      var el = document.getElementById("restricted-overlay");
+      el.style.display = "flex";
+    }
+    function hideRestricted() {
+      document.getElementById("restricted-overlay").style.display = "none";
+    }
     function showRegister() {
       document.getElementById("login-box") && (document.querySelector("#login-overlay .login-box:first-child").style.display = "none");
       document.getElementById("register-box").style.display = "block";
@@ -1502,9 +1520,8 @@
           if (data.password !== password) throw new Error("wrong_password");
           // Check if restricted
           if (data.restricted) {
-            // Turn login screen red
-            document.getElementById("login-overlay").classList.add("restricted");
-            throw new Error("Your account has been restricted by an administrator.");
+            showRestricted();
+            throw new Error("restricted");
           }
           doc.ref.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           return { id: doc.id, data: data };
@@ -1517,8 +1534,7 @@
         btn.classList.remove("loading"); btn.disabled = false;
 
         if (isRestricted) {
-          err.classList.add("show");
-          err.textContent = "Your account has been restricted.";
+          showRestricted();
           currentUser = null;
           return;
         }
@@ -1542,9 +1558,11 @@
           if (!snap.exists) return;
           var d = snap.data();
           if (d.restricted && !isAdmin) {
-            // Force back to login
-            location.reload();
+            showRestricted();
+            return;
           }
+          // Unrestricted — hide the screen if it was showing
+          hideRestricted();
           hasSpecialAccess = !!d.specialAccess;
           var tabExtra = document.getElementById("tab-extra");
           if (hasSpecialAccess) {
@@ -1557,8 +1575,9 @@
 
       }).catch(function(e) {
         btn.classList.remove("loading"); btn.disabled = false;
+        if (e.message === "restricted") return;
         err.classList.add("show");
-        err.textContent = e.message === "wrong_password" ? "Incorrect password." : "Error: " + e.message;
+        err.textContent = e.message === "wrong_password" ? "Incorrect password." : e.message;
       });
     }
 
@@ -2086,8 +2105,7 @@
               if (!doc.exists) { localStorage.removeItem("uz_session"); return; }
               var d = doc.data();
               if (d.restricted) {
-                localStorage.removeItem("uz_session");
-                document.getElementById("login-overlay").classList.add("restricted");
+                showRestricted();
                 return;
               }
               // Valid session — log in silently
@@ -2100,7 +2118,12 @@
               db.collection("users").doc(session.id).onSnapshot(function(snap) {
                 if (!snap.exists) { localStorage.removeItem("uz_session"); location.reload(); return; }
                 var d2 = snap.data();
-                if (d2.restricted) { localStorage.removeItem("uz_session"); location.reload(); return; }
+                if (d2.restricted) {
+                  showRestricted();
+                  return;
+                }
+                // If they were restricted and now unrestricted, hide the screen
+                hideRestricted();
                 hasSpecialAccess = !!d2.specialAccess;
                 var tabExtra = document.getElementById("tab-extra");
                 if (hasSpecialAccess) tabExtra.classList.remove("locked-tab");
