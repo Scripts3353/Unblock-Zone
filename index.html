@@ -2241,7 +2241,10 @@
               currentUser = { id: session.id, ...d };
               hasSpecialAccess = !!d.specialAccess;
               document.getElementById("login-overlay").classList.add("hidden");
-              if (hasSpecialAccess) document.getElementById("tab-extra").classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
+              if (hasSpecialAccess) {
+                document.getElementById("tab-extra").classList.remove("locked-tab");
+                document.getElementById("tab-yt").classList.remove("locked-tab");
+              }
               startPresence(session.id);
               // Watch for real-time changes
               db.collection("users").doc(session.id).onSnapshot(function(snap) {
@@ -2255,8 +2258,14 @@
                 hideRestricted();
                 hasSpecialAccess = !!d2.specialAccess;
                 var tabExtra = document.getElementById("tab-extra");
-                if (hasSpecialAccess) tabExtra.classList.remove("locked-tab"); document.getElementById("tab-yt").classList.remove("locked-tab");
-                else { tabExtra.classList.add("locked-tab"); document.getElementById("tab-yt").classList.add("locked-tab"); if (activeTab === 'extra') switchTab('all'); }
+                if (hasSpecialAccess) {
+                  tabExtra.classList.remove("locked-tab");
+                  document.getElementById("tab-yt").classList.remove("locked-tab");
+                } else {
+                  tabExtra.classList.add("locked-tab");
+                  document.getElementById("tab-yt").classList.add("locked-tab");
+                  if (activeTab === 'extra' || activeTab === 'yt') switchTab('all');
+                }
               });
             }).catch(function() { localStorage.removeItem("uz_session"); });
           }
