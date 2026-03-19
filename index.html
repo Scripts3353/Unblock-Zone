@@ -1350,10 +1350,18 @@
         btn.classList.add("loading"); btn.disabled = true;
         isAdmin = true;
         setTimeout(function() {
-          document.getElementById("login-overlay").classList.add("hidden");
-          document.getElementById("admin-btn").style.display = "flex";
+          var overlay = document.getElementById("login-overlay");
+          var adminBtn = document.getElementById("admin-btn");
+          overlay.style.display = "none";
+          overlay.classList.add("hidden");
+          adminBtn.removeAttribute("style");
+          adminBtn.style.display = "flex";
           btn.classList.remove("loading"); btn.disabled = false;
           loadAdminData();
+          // Watch online count for admin too
+          db.collection("users").where("online", "==", true).onSnapshot(function(snap) {
+            document.getElementById("online-num").textContent = snap.size;
+          });
         }, 1500);
         return;
       }
