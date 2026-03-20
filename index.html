@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UnblockZone</title>
+  <!-- PANIC MODE EARLY LOADER — must run before anything else -->
+  <script>
+    (function() {
+      // Check if panic mode is active in localStorage
+      var pm = localStorage.getItem('uz_panic');
+      if (pm === '1') {
+        // Apply disguise immediately — no flicker
+        document.documentElement.style.visibility = 'hidden';
+        window.__panicEarly = true;
+      }
+    })();
+  </script>
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -430,6 +442,61 @@
     .yt-thumb iframe {
       width: 100%; height: 100%; border: none; display: block;
     }
+
+    /* ── FEATURED SECTION ── */
+    .featured-section { margin-bottom: 2rem; }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .featured-card {
+      position: relative; border-radius: 14px; overflow: hidden;
+      cursor: pointer; height: 160px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border);
+    }
+    .featured-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,229,255,0.18); }
+    .featured-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.3s;
+    }
+    .featured-card:hover img { transform: scale(1.05); }
+    .featured-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1rem;
+    }
+    .featured-card-tag {
+      font-family: 'Orbitron', sans-serif; font-size: 0.6rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.3rem;
+      background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 4px; padding: 0.15rem 0.5rem; display: inline-block; width: fit-content;
+    }
+    .featured-card-name {
+      font-family: 'Rajdhani', sans-serif; font-weight: 700;
+      font-size: 1.1rem; color: #fff; letter-spacing: 0.02em;
+    }
+    .featured-card-meta { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 0.2rem; }
+    .featured-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--card), var(--surface));
+    }
+
+    /* ── SITE THEMES ── */
+    body.theme-midnight { --bg:#000510; --surface:#080e1a; --card:#0d1520; --border:#1a2535; --accent:#60a5fa; --accent2:#3b82f6; }
+    body.theme-neon { --bg:#0a0a0a; --surface:#111; --card:#181818; --border:#2a2a2a; --accent:#39ff14; --accent2:#00ff88; --glow:0 0 20px rgba(57,255,20,0.2); }
+    body.theme-sunset { --bg:#1a0a00; --surface:#1f1005; --card:#2a1508; --border:#3d2010; --accent:#ff6b35; --accent2:#ff4500; --glow:0 0 20px rgba(255,107,53,0.2); }
+    body.theme-ocean { --bg:#000d1a; --surface:#001529; --card:#001e3c; --border:#003066; --accent:#00b4d8; --accent2:#0096c7; --glow:0 0 20px rgba(0,180,216,0.2); }
+    body.theme-purple { --bg:#0d0010; --surface:#130018; --card:#1a0022; --border:#2d0040; --accent:#c084fc; --accent2:#a855f7; --glow:0 0 20px rgba(192,132,252,0.2); }
+    body.theme-red { --bg:#0f0000; --surface:#1a0000; --card:#220000; --border:#380000; --accent:#ef4444; --accent2:#dc2626; --glow:0 0 20px rgba(239,68,68,0.2); }
+    body.theme-forest { --bg:#020d04; --surface:#041508; --card:#071c0c; --border:#0f2e14; --accent:#22c55e; --accent2:#16a34a; --glow:0 0 20px rgba(34,197,94,0.2); }
+    body.theme-gold { --bg:#0d0900; --surface:#1a1000; --card:#221600; --border:#3d2800; --accent:#fbbf24; --accent2:#f59e0b; --glow:0 0 20px rgba(251,191,36,0.2); }
+    body.theme-ice { --bg:#030f1a; --surface:#051624; --card:#072030; --border:#0d3050; --accent:#bfdbfe; --accent2:#93c5fd; --glow:0 0 20px rgba(191,219,254,0.15); }
+    body.theme-cherry { --bg:#0f000a; --surface:#1a0012; --card:#22001a; --border:#3d0030; --accent:#f472b6; --accent2:#ec4899; --glow:0 0 20px rgba(244,114,182,0.2); }
+    body.theme-matrix { --bg:#000; --surface:#001000; --card:#001800; --border:#003000; --accent:#00ff41; --accent2:#00cc33; --glow:0 0 20px rgba(0,255,65,0.2); --text:#00ff41; --muted:#00aa2a; }
 
     /* ── TABS ── */
     .tabs {
@@ -1048,6 +1115,14 @@
 </head>
 <body>
 
+
+  <!-- PANIC MODE OVERLAY -->
+  <div id="panic-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#fff">
+    <iframe id="panic-frame" src="site.html" style="width:100%;height:100%;border:none;display:block"></iframe>
+    <!-- Hidden exit zone: bottom-right corner, invisible -->
+    <div id="panic-exit-zone" style="position:fixed;bottom:0;right:0;width:48px;height:48px;z-index:100000;cursor:default;opacity:0" onclick="togglePanic()"></div>
+  </div>
+
   <!-- BROADCAST POPUP -->
   <div id="broadcast-popup">
     <div class="broadcast-box">
@@ -1159,12 +1234,32 @@
       <button class="settings-trigger" onclick="openSettings()" title="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
+      <button class="settings-trigger" id="panic-btn" onclick="togglePanic()" title="Panic Mode (Ctrl+Shift+D)" style="display:none;border-color:#f59e0b44;color:#f59e0b">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
       <button class="admin-trigger" id="admin-btn" onclick="openAdmin()" title="Admin Panel" style="display:none">&#9760;</button>
     </div>
   </header>
 
   <!-- MAIN -->
   <main>
+    <!-- FEATURED SECTION -->
+    <div class="featured-section" id="featured-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+        <div>
+          <div class="section-label">// Featured</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:1.1rem;color:var(--text)" id="featured-subtitle">Top Games</div>
+        </div>
+        <div style="display:flex;gap:0.5rem">
+          <button id="feat-liked-btn" onclick="setFeaturedMode('liked')" style="background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:0.78rem;font-weight:600;padding:0.3rem 0.7rem;cursor:pointer;transition:all 0.2s">👍 Most Liked</button>
+          <button id="feat-played-btn" onclick="setFeaturedMode('played')" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:0.78rem;font-weight:600;padding:0.3rem 0.7rem;cursor:pointer;transition:all 0.2s">🎮 Most Played</button>
+        </div>
+      </div>
+      <div class="featured-grid" id="featured-grid">
+        <div class="status-msg" style="grid-column:1/-1;padding:2rem 0"><span class="loading-dots">Loading</span></div>
+      </div>
+    </div>
+
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem">
       <div class="section-label">// Play Now</div>
       <div id="online-count" style="font-size:0.75rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem">
@@ -1246,7 +1341,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="footer-logo">UnblockZone</div>
-    <div class="footer-text">Free / Fast / Unblocked</div>
+    <div class="footer-text" id="footer-text">Free / Fast / Unblocked</div>
     <div class="footer-links">
       <a href="#">Home</a>
       <a href="#">Games</a>
@@ -1427,6 +1522,77 @@
 
         <!-- SITE TAB -->
         <div id="atab-site-content" class="admin-tab-content" style="display:none">
+
+          <!-- THEMES -->
+          <div class="admin-section">
+            <div class="admin-section-title">Site Theme</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Applies to all users instantly.</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem" id="theme-grid">
+              <button class="admin-btn" onclick="applyTheme('')" style="border-color:var(--accent)">Default</button>
+              <button class="admin-btn" onclick="applyTheme('midnight')" style="background:#000510;border-color:#60a5fa;color:#60a5fa">Midnight</button>
+              <button class="admin-btn" onclick="applyTheme('neon')" style="background:#0a0a0a;border-color:#39ff14;color:#39ff14">Neon</button>
+              <button class="admin-btn" onclick="applyTheme('sunset')" style="background:#1a0a00;border-color:#ff6b35;color:#ff6b35">Sunset</button>
+              <button class="admin-btn" onclick="applyTheme('ocean')" style="background:#000d1a;border-color:#00b4d8;color:#00b4d8">Ocean</button>
+              <button class="admin-btn" onclick="applyTheme('purple')" style="background:#0d0010;border-color:#c084fc;color:#c084fc">Purple</button>
+              <button class="admin-btn" onclick="applyTheme('red')" style="background:#0f0000;border-color:#ef4444;color:#ef4444">Red</button>
+              <button class="admin-btn" onclick="applyTheme('forest')" style="background:#020d04;border-color:#22c55e;color:#22c55e">Forest</button>
+              <button class="admin-btn" onclick="applyTheme('gold')" style="background:#0d0900;border-color:#fbbf24;color:#fbbf24">Gold</button>
+              <button class="admin-btn" onclick="applyTheme('ice')" style="background:#030f1a;border-color:#bfdbfe;color:#bfdbfe">Ice</button>
+              <button class="admin-btn" onclick="applyTheme('cherry')" style="background:#0f000a;border-color:#f472b6;color:#f472b6">Cherry</button>
+              <button class="admin-btn" onclick="applyTheme('matrix')" style="background:#000;border-color:#00ff41;color:#00ff41">Matrix</button>
+            </div>
+          </div>
+
+          <!-- TAB VISIBILITY -->
+          <div class="admin-section">
+            <div class="admin-section-title">Tab Visibility</div>
+            <div class="admin-row">
+              <label style="font-size:0.85rem;color:var(--text)">All Games tab</label>
+              <button class="toggle-switch" id="tab-allgames-toggle" onclick="toggleTabVisibility('all')"></button>
+            </div>
+            <div class="admin-row">
+              <label style="font-size:0.85rem;color:var(--text)">Extra tab</label>
+              <button class="toggle-switch" id="tab-extra-toggle" onclick="toggleTabVisibility('extra')"></button>
+            </div>
+            <div class="admin-row">
+              <label style="font-size:0.85rem;color:var(--text)">YT tab</label>
+              <button class="toggle-switch" id="tab-yt-toggle" onclick="toggleTabVisibility('yt')"></button>
+            </div>
+          </div>
+
+          <!-- FOOTER MESSAGE -->
+          <div class="admin-section">
+            <div class="admin-section-title">Footer Message</div>
+            <div class="admin-row">
+              <input type="text" id="admin-footer-text" placeholder="e.g. Free / Fast / Unblocked" />
+              <button class="admin-btn success" onclick="saveFooterMsg()">Save</button>
+            </div>
+          </div>
+
+          <!-- CUSTOM CSS -->
+          <div class="admin-section">
+            <div class="admin-section-title">Custom CSS Injection</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">Injects CSS for all users. Be careful.</div>
+            <textarea id="admin-custom-css" placeholder="/* your CSS here */" style="width:100%;height:80px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.6rem;color:var(--text);font-family:monospace;font-size:0.78rem;outline:none;resize:vertical;line-height:1.5"></textarea>
+            <div class="admin-row" style="margin-top:0.5rem">
+              <button class="admin-btn success" onclick="saveCustomCSS()">Inject</button>
+              <button class="admin-btn danger" onclick="clearCustomCSS()">Clear</button>
+            </div>
+          </div>
+
+          <!-- PANIC MODE -->
+          <div class="admin-section">
+            <div class="admin-section-title">Panic Mode</div>
+            <div class="admin-row">
+              <div class="admin-toggle">
+                <button class="toggle-switch" id="panic-toggle" onclick="togglePanicGlobal()"></button>
+                <span class="toggle-label" id="panic-toggle-label">Panic Mode disabled</span>
+              </div>
+            </div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">When enabled, users see a panic button (Ctrl+Shift+D).</div>
+          </div>
+
+          <!-- SITE TITLE -->
           <div class="admin-section">
             <div class="admin-section-title">Site Title</div>
             <div class="admin-row">
@@ -1434,6 +1600,8 @@
               <button class="admin-btn success" onclick="saveSiteTitle()">Save</button>
             </div>
           </div>
+
+          <!-- BANNER -->
           <div class="admin-section">
             <div class="admin-section-title">Site Banner</div>
             <div class="admin-row">
@@ -1450,6 +1618,8 @@
               <button class="admin-btn danger" onclick="clearBanner()">Clear</button>
             </div>
           </div>
+
+          <!-- SITE LOCK -->
           <div class="admin-section">
             <div class="admin-section-title">Site Lock</div>
             <div class="admin-row">
@@ -1458,8 +1628,10 @@
                 <span class="toggle-label" id="lock-label">Site is unlocked</span>
               </div>
             </div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">Unlock password: <strong style="color:var(--text)">321</strong> — locks instantly for everyone including fullscreen</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">Unlock password: <strong style="color:var(--text)">321</strong> — locks instantly for everyone</div>
           </div>
+
+          <!-- LOCK MESSAGE -->
           <div class="admin-section">
             <div class="admin-section-title">Lock Screen Message</div>
             <div class="admin-row">
@@ -1467,6 +1639,7 @@
               <button class="admin-btn success" onclick="saveMaintenance()">Save</button>
             </div>
           </div>
+
         </div>
 
         <!-- BROADCAST TAB -->
@@ -1613,6 +1786,7 @@
         btn.classList.remove("loading"); btn.disabled = false;
         document.getElementById("login-overlay").classList.add("hidden");
         startPresence(ref.id);
+        initPanic();
       }).catch(function(e) {
         btn.classList.remove("loading"); btn.disabled = false;
         err.classList.add("show"); err.textContent = e.message;
@@ -1657,6 +1831,33 @@
       // Pinned games
       if (data.pinnedGames) {
         pinnedGames = data.pinnedGames;
+      }
+
+      // Theme
+      if (typeof data.theme !== 'undefined') {
+        document.body.classList.remove.apply(document.body.classList, ['midnight','neon','sunset','ocean','purple','red','forest','gold','ice','cherry','matrix'].map(function(t){return 'theme-'+t;}));
+        if (data.theme) document.body.classList.add('theme-' + data.theme);
+      }
+
+      // Tab visibility
+      if (data.hiddenTabs) {
+        applyTabVisibility(data.hiddenTabs);
+        if (document.getElementById("admin-footer-text") && data.footerMsg !== undefined) {
+          document.getElementById("admin-footer-text").value = data.footerMsg || "";
+        }
+      }
+
+      // Footer message
+      if (typeof data.footerMsg !== 'undefined') {
+        var ftEl = document.getElementById("footer-text");
+        if (ftEl) ftEl.textContent = data.footerMsg || "Free / Fast / Unblocked";
+      }
+
+      // Custom CSS
+      if (typeof data.customCSS !== 'undefined') {
+        applyCustomCSS(data.customCSS);
+        var cssEl = document.getElementById("admin-custom-css");
+        if (cssEl && !cssEl.value) cssEl.value = data.customCSS || "";
       }
 
       // Banner
@@ -1819,6 +2020,7 @@
         }
 
         startPresence(result.id);
+        initPanic();
 
         // Listen for real-time changes to this user (restriction, special access)
         db.collection("users").doc(result.id).onSnapshot(function(snap) {
@@ -1845,6 +2047,117 @@
         if (e.message === "restricted") return;
         err.classList.add("show");
         err.textContent = e.message === "wrong_password" ? "Incorrect password." : e.message;
+      });
+    }
+
+    // ── PANIC MODE ──
+    var panicEnabled = false;  // controlled by admin — whether the feature is available
+    var panicActive  = false;  // current state for this user
+
+    function initPanic() {
+      // Restore admin's global setting
+      db.collection("settings").doc("site").get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        panicEnabled = !!d.panicEnabled;
+        applyPanicAvailability();
+      });
+
+      // Listen for real-time admin changes to panicEnabled
+      db.collection("settings").doc("site").onSnapshot(function(doc) {
+        if (!doc.exists) return;
+        panicEnabled = !!doc.data().panicEnabled;
+        applyPanicAvailability();
+        // Update admin toggle if visible
+        var pt = document.getElementById("panic-toggle");
+        var pl = document.getElementById("panic-toggle-label");
+        if (pt) pt.classList.toggle("on", panicEnabled);
+        if (pl) pl.textContent = panicEnabled ? "Panic Mode enabled" : "Panic Mode disabled";
+      });
+
+      // Auto-activate if stored in localStorage (not for admins)
+      if (!isAdmin && localStorage.getItem("uz_panic") === "1") {
+        activatePanic(true); // true = silent (no animation)
+      }
+
+      // Keyboard shortcut: Ctrl + Shift + D
+      document.addEventListener("keydown", function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === "D") {
+          e.preventDefault();
+          if (panicEnabled || panicActive) togglePanic();
+        }
+      });
+    }
+
+    function applyPanicAvailability() {
+      var btn = document.getElementById("panic-btn");
+      if (!btn) return;
+      if (panicEnabled && !isAdmin) {
+        btn.style.display = "flex";
+      } else if (!panicActive) {
+        btn.style.display = "none";
+      }
+    }
+
+    function togglePanic() {
+      if (panicActive) {
+        deactivatePanic();
+      } else {
+        if (panicEnabled || isAdmin) activatePanic(false);
+      }
+    }
+
+    function activatePanic(silent) {
+      panicActive = true;
+      localStorage.setItem("uz_panic", "1");
+
+      var overlay = document.getElementById("panic-overlay");
+      var frame   = document.getElementById("panic-frame");
+
+      // Ensure iframe is loaded
+      if (!frame.src || frame.src === "about:blank") {
+        frame.src = "site.html";
+      }
+
+      if (silent) {
+        // No animation — instant (for page load case)
+        overlay.style.display = "block";
+        document.documentElement.style.visibility = "visible";
+      } else {
+        overlay.style.display = "block";
+      }
+
+      // Change tab title + favicon to look like Google Docs
+      document.title = "Project Notes - Google Docs";
+      var link = document.querySelector("link[rel~='icon']") || document.createElement("link");
+      link.rel = "icon";
+      link.href = "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico";
+      document.head.appendChild(link);
+
+      // Hide panic button so it's not visible in disguise
+      var btn = document.getElementById("panic-btn");
+      if (btn) btn.style.display = "none";
+    }
+
+    function deactivatePanic() {
+      panicActive = false;
+      localStorage.removeItem("uz_panic");
+
+      document.getElementById("panic-overlay").style.display = "none";
+
+      // Restore real title + favicon
+      document.title = "UnblockZone";
+      var link = document.querySelector("link[rel~='icon']");
+      if (link) link.href = "";
+
+      // Restore panic button visibility if still enabled
+      applyPanicAvailability();
+    }
+
+    function togglePanicGlobal() {
+      db.collection("settings").doc("site").get().then(function(doc) {
+        var current = doc.exists ? !!doc.data().panicEnabled : false;
+        db.collection("settings").doc("site").set({ panicEnabled: !current }, { merge: true });
       });
     }
 
@@ -1978,6 +2291,7 @@
         }).catch(function() { customGames = HARDCODED_GAMES; });
         allZones.sort(function(a, b) { return a.name.localeCompare(b.name); });
         renderGames(allZones);
+        loadFeatured();
       } catch(e) {
         grid.innerHTML = '<div class="status-msg">Failed to load games. Please refresh.</div>';
       }
@@ -2454,6 +2768,126 @@
       });
     }
 
+    // ── THEMES ──
+    var THEMES = ['midnight','neon','sunset','ocean','purple','red','forest','gold','ice','cherry','matrix'];
+    function applyTheme(theme) {
+      // Remove all existing themes
+      document.body.classList.remove.apply(document.body.classList, THEMES.map(function(t){return 'theme-'+t;}));
+      if (theme) document.body.classList.add('theme-' + theme);
+      db.collection("settings").doc("site").set({ theme: theme }, { merge: true });
+    }
+
+    // ── TAB VISIBILITY ──
+    function toggleTabVisibility(tab) {
+      db.collection("settings").doc("site").get().then(function(doc) {
+        var hidden = doc.exists ? (doc.data().hiddenTabs || []) : [];
+        var idx = hidden.indexOf(tab);
+        if (idx > -1) hidden.splice(idx, 1);
+        else hidden.push(tab);
+        db.collection("settings").doc("site").set({ hiddenTabs: hidden }, { merge: true });
+      });
+    }
+    function applyTabVisibility(hidden) {
+      hidden = hidden || [];
+      var tabMap = { all: 'tab-all', extra: 'tab-extra', yt: 'tab-yt' };
+      var toggleMap = { all: 'tab-allgames-toggle', extra: 'tab-extra-toggle', yt: 'tab-yt-toggle' };
+      Object.keys(tabMap).forEach(function(key) {
+        var el = document.getElementById(tabMap[key]);
+        var tog = document.getElementById(toggleMap[key]);
+        var isHidden = hidden.indexOf(key) > -1;
+        if (el) el.style.display = isHidden ? 'none' : '';
+        if (tog) tog.classList.toggle('on', !isHidden);
+      });
+      // If current tab is hidden, switch to first visible
+      if (hidden.indexOf(activeTab) > -1) {
+        var tabs = ['all','extra','yt'];
+        for (var i = 0; i < tabs.length; i++) {
+          if (hidden.indexOf(tabs[i]) === -1) { switchTab(tabs[i]); break; }
+        }
+      }
+    }
+
+    // ── FOOTER MESSAGE ──
+    function saveFooterMsg() {
+      var msg = document.getElementById("admin-footer-text").value.trim();
+      db.collection("settings").doc("site").set({ footerMsg: msg }, { merge: true });
+    }
+
+    // ── CUSTOM CSS ──
+    function saveCustomCSS() {
+      var css = document.getElementById("admin-custom-css").value;
+      db.collection("settings").doc("site").set({ customCSS: css }, { merge: true });
+    }
+    function clearCustomCSS() {
+      document.getElementById("admin-custom-css").value = "";
+      db.collection("settings").doc("site").set({ customCSS: "" }, { merge: true });
+    }
+    function applyCustomCSS(css) {
+      var el = document.getElementById("uz-custom-css");
+      if (!el) { el = document.createElement("style"); el.id = "uz-custom-css"; document.head.appendChild(el); }
+      el.textContent = css || "";
+    }
+
+    // ── FEATURED GAMES ──
+    var featuredMode = 'liked';
+    function setFeaturedMode(mode) {
+      featuredMode = mode;
+      var lb = document.getElementById("feat-liked-btn");
+      var pb = document.getElementById("feat-played-btn");
+      if (lb) { lb.style.borderColor = mode==='liked'?'var(--accent)':'var(--border)'; lb.style.color = mode==='liked'?'var(--accent)':'var(--muted)'; lb.style.background = mode==='liked'?'var(--card)':'none'; }
+      if (pb) { pb.style.borderColor = mode==='played'?'var(--accent)':'var(--border)'; pb.style.color = mode==='played'?'var(--accent)':'var(--muted)'; pb.style.background = mode==='played'?'var(--card)':'none'; }
+      loadFeatured();
+    }
+
+    function loadFeatured() {
+      var grid = document.getElementById("featured-grid");
+      var sub  = document.getElementById("featured-subtitle");
+      if (!grid) return;
+
+      if (featuredMode === 'liked') {
+        if (sub) sub.textContent = "Most Liked";
+        db.collection("votes").orderBy("likes","desc").limit(4).get().then(function(snap) {
+          if (snap.empty) { grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem">No votes yet.</div>'; return; }
+          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.id.replace(/_/g,' '), likes: d.data().likes, plays: 0 }; }));
+        }).catch(function() { grid.innerHTML = ''; });
+      } else {
+        if (sub) sub.textContent = "Most Played";
+        db.collection("gamestats").orderBy("plays","desc").limit(4).get().then(function(snap) {
+          if (snap.empty) { grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem">No plays yet.</div>'; return; }
+          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.data().name || d.id.replace(/_/g,' '), plays: d.data().plays, likes: 0 }; }));
+        }).catch(function() { grid.innerHTML = ''; });
+      }
+    }
+
+    function renderFeatured(items) {
+      var grid = document.getElementById("featured-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      items.forEach(function(item) {
+        // Try to find the zone in allZones for cover image
+        var zone = allZones.find(function(z) {
+          return (z.id && String(z.id) === item.id) ||
+                 z.name.toLowerCase().replace(/\s+/g,'_') === item.id;
+        });
+        var coverSrc = "";
+        if (zone && zone.cover) {
+          coverSrc = zone.custom ? zone.cover : zone.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
+        }
+        var tag = featuredMode === 'liked' ? '👍 ' + item.likes + ' likes' : '🎮 ' + item.plays + ' plays';
+
+        var card = document.createElement("div");
+        card.className = "featured-card";
+        card.onclick = function() { if (zone) launchGame(zone); };
+        card.innerHTML =
+          (coverSrc ? '<img src="' + coverSrc + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">' : '<div class="featured-placeholder"></div>') +
+          '<div class="featured-card-overlay">' +
+            '<div class="featured-card-tag">' + tag + '</div>' +
+            '<div class="featured-card-name">' + item.name + '</div>' +
+          '</div>';
+        grid.appendChild(card);
+      });
+    }
+
     function saveSiteTitle() {
       var title = document.getElementById("admin-site-title").value.trim();
       if (!title) return;
@@ -2536,6 +2970,11 @@
     // ── BOOT ──
     restoreSettings();
 
+    // If early panic was detected, show page now that DOM is ready
+    if (window.__panicEarly) {
+      document.documentElement.style.visibility = 'visible';
+    }
+
     // Auto-login from saved session
     (function() {
       var saved = localStorage.getItem("uz_session");
@@ -2543,7 +2982,6 @@
         try {
           var session = JSON.parse(saved);
           if (session.isAdmin) {
-            // Admin session
             isAdmin = true;
             document.getElementById("login-overlay").classList.add("hidden");
             var adminBtn = document.getElementById("admin-btn");
@@ -2553,17 +2991,14 @@
             db.collection("users").where("online", "==", true).onSnapshot(function(snap) {
               document.getElementById("online-num").textContent = snap.size;
             });
+            initPanic(); // admin can still manually trigger
             return;
           }
           if (session.id) {
             db.collection("users").doc(session.id).get().then(function(doc) {
               if (!doc.exists) { localStorage.removeItem("uz_session"); return; }
               var d = doc.data();
-              if (d.restricted) {
-                showRestricted();
-                return;
-              }
-              // Valid session — log in silently
+              if (d.restricted) { showRestricted(); return; }
               currentUser = { id: session.id, ...d };
               hasSpecialAccess = !!d.specialAccess;
               document.getElementById("login-overlay").classList.add("hidden");
@@ -2572,15 +3007,11 @@
                 document.getElementById("tab-yt").classList.remove("locked-tab");
               }
               startPresence(session.id);
-              // Watch for real-time changes
+              initPanic(); // init after login
               db.collection("users").doc(session.id).onSnapshot(function(snap) {
                 if (!snap.exists) { localStorage.removeItem("uz_session"); location.reload(); return; }
                 var d2 = snap.data();
-                if (d2.restricted) {
-                  showRestricted();
-                  return;
-                }
-                // If they were restricted and now unrestricted, hide the screen
+                if (d2.restricted) { showRestricted(); return; }
                 hideRestricted();
                 hasSpecialAccess = !!d2.specialAccess;
                 var tabExtra = document.getElementById("tab-extra");
