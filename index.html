@@ -485,6 +485,24 @@
       background: linear-gradient(135deg, var(--card), var(--surface));
     }
 
+    /* ── UI DESIGNER BLOCKS ── */
+    .designer-block {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.4rem 0.6rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .designer-block:hover { border-color: var(--accent); background: var(--card); }
+    .designer-block.selected { border-color: var(--accent); background: var(--card); }
+    .db-drag { color: var(--muted); cursor: grab; font-size: 1rem; line-height: 1; }
+    .db-drag:active { cursor: grabbing; }
+    .db-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .db-label { flex: 1; font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .db-badge { font-size: 0.65rem; background: #ff4d6d22; color: #ff4d6d; border: 1px solid #ff4d6d44; border-radius: 4px; padding: 0.1rem 0.3rem; }
+    .db-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; padding: 0 2px; transition: color 0.15s; }
+    .db-del:hover { color: #ff4d6d; }
+
     /* ── UI OPTIONS ── */
     .ui-option {
       display: flex; align-items: center; gap: 0.8rem;
@@ -1796,85 +1814,67 @@
 
         <!-- UI TAB -->
         <div id="atab-ui-content" class="admin-tab-content" style="display:none">
+
+          <!-- Preset layouts row -->
           <div class="admin-section">
-            <div class="admin-section-title">UI Layout</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Changes the layout for all users instantly.</div>
-            <div style="display:flex;flex-direction:column;gap:0.6rem">
+            <div class="admin-section-title">Quick Presets</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+              <button class="admin-btn" onclick="loadPreset('default')">Default</button>
+              <button class="admin-btn" onclick="loadPreset('sidebar')">Sidebar</button>
+              <button class="admin-btn" onclick="loadPreset('minimal')">Minimal</button>
+              <button class="admin-btn" onclick="loadPreset('magazine')">Magazine</button>
+              <button class="admin-btn" onclick="loadPreset('compact')">Compact</button>
+            </div>
+          </div>
 
-              <div class="ui-option" id="ui-opt-default" onclick="applyUILayout('')">
-                <div class="ui-option-preview" style="background:linear-gradient(135deg,#0d0d0f,#1a1a1f)">
-                  <div style="height:8px;background:#141417;margin-bottom:4px;border-radius:2px"></div>
-                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px">
-                    <div style="height:28px;background:#1a1a1f;border-radius:2px"></div>
-                    <div style="height:28px;background:#1a1a1f;border-radius:2px"></div>
-                    <div style="height:28px;background:#1a1a1f;border-radius:2px"></div>
+          <!-- Designer -->
+          <div class="admin-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem">
+              <div class="admin-section-title" style="margin:0">UI Designer</div>
+              <div style="display:flex;gap:0.5rem">
+                <button class="admin-btn success" onclick="publishUIDesign()">Publish to All</button>
+                <button class="admin-btn" onclick="resetUIDesign()">Reset</button>
+              </div>
+            </div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem">Drag blocks to reorder. Click a block to edit its properties. Changes publish instantly to all users.</div>
+
+            <!-- Two-column: blocks panel + live preview -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;min-height:400px">
+
+              <!-- LEFT: Block list (draggable) -->
+              <div>
+                <div style="font-size:0.72rem;letter-spacing:0.1em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;font-family:'Orbitron',sans-serif">Blocks</div>
+                <div id="designer-blocks" style="display:flex;flex-direction:column;gap:0.4rem;min-height:100px"></div>
+                <div style="margin-top:0.8rem">
+                  <div style="font-size:0.72rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:0.4rem">Add Block</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:0.3rem">
+                    <button class="admin-btn" onclick="addDesignerBlock('header')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Header</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('featured')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Featured</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('tabs')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Tabs</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('games')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Games</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('banner')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Banner</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('footer')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Footer</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('spacer')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Spacer</button>
+                    <button class="admin-btn" onclick="addDesignerBlock('text')" style="font-size:0.72rem;padding:0.2rem 0.5rem">+ Text</button>
                   </div>
-                </div>
-                <div class="ui-option-info">
-                  <div class="ui-option-name">Default <span class="badge special" id="ui-active-badge-default" style="display:none">Active</span></div>
-                  <div class="ui-option-desc">Original dark card grid layout</div>
                 </div>
               </div>
 
-              <div class="ui-option" id="ui-opt-sidebar" onclick="applyUILayout('sidebar')">
-                <div class="ui-option-preview" style="background:linear-gradient(135deg,#0d0d0f,#1a1a1f);display:flex">
-                  <div style="width:28px;background:#141417;margin-right:4px;border-radius:2px"></div>
-                  <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:3px;align-content:start">
-                    <div style="height:28px;background:#1a1a1f;border-radius:2px"></div>
-                    <div style="height:28px;background:#1a1a1f;border-radius:2px"></div>
+              <!-- RIGHT: Properties + Mini Preview -->
+              <div style="display:flex;flex-direction:column;gap:0.8rem">
+                <div>
+                  <div style="font-size:0.72rem;letter-spacing:0.1em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;font-family:'Orbitron',sans-serif">Properties</div>
+                  <div id="designer-props" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;min-height:80px;font-size:0.82rem;color:var(--muted)">
+                    Click a block to edit its properties.
                   </div>
                 </div>
-                <div class="ui-option-info">
-                  <div class="ui-option-name">Sidebar <span class="badge special" id="ui-active-badge-sidebar" style="display:none">Active</span></div>
-                  <div class="ui-option-desc">Navigation sidebar with hidden top bar</div>
-                </div>
-              </div>
-
-              <div class="ui-option" id="ui-opt-minimal" onclick="applyUILayout('minimal')">
-                <div class="ui-option-preview" style="background:linear-gradient(135deg,#0d0d0f,#141417)">
-                  <div style="height:5px;background:#1a1a1f;margin-bottom:6px;border-radius:1px"></div>
-                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px">
-                    <div style="height:20px;background:#1a1a1f;border-radius:1px"></div>
-                    <div style="height:20px;background:#1a1a1f;border-radius:1px"></div>
-                    <div style="height:20px;background:#1a1a1f;border-radius:1px"></div>
-                    <div style="height:20px;background:#1a1a1f;border-radius:1px"></div>
+                <div>
+                  <div style="font-size:0.72rem;letter-spacing:0.1em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;font-family:'Orbitron',sans-serif">Live Preview</div>
+                  <div id="designer-preview" style="background:#0d0d0f;border:1px solid var(--border);border-radius:8px;overflow:hidden;height:220px;position:relative">
+                    <div id="designer-preview-inner" style="transform-origin:top left;width:600px"></div>
                   </div>
                 </div>
-                <div class="ui-option-info">
-                  <div class="ui-option-name">Minimal <span class="badge special" id="ui-active-badge-minimal" style="display:none">Active</span></div>
-                  <div class="ui-option-desc">Clean, no featured section, no footer</div>
-                </div>
               </div>
-
-              <div class="ui-option" id="ui-opt-magazine" onclick="applyUILayout('magazine')">
-                <div class="ui-option-preview" style="background:#f5f5f0">
-                  <div style="height:8px;background:#fff;border-bottom:2px solid #000;margin-bottom:4px"></div>
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
-                    <div style="height:30px;background:#e5e5e0;border-radius:2px"></div>
-                    <div style="height:30px;background:#e5e5e0;border-radius:2px"></div>
-                  </div>
-                </div>
-                <div class="ui-option-info">
-                  <div class="ui-option-name">Magazine <span class="badge special" id="ui-active-badge-magazine" style="display:none">Active</span></div>
-                  <div class="ui-option-desc">Light editorial style with serif fonts</div>
-                </div>
-              </div>
-
-              <div class="ui-option" id="ui-opt-compact" onclick="applyUILayout('compact')">
-                <div class="ui-option-preview" style="background:linear-gradient(135deg,#0d0d0f,#1a1a1f)">
-                  <div style="height:8px;background:#141417;margin-bottom:4px;border-radius:2px"></div>
-                  <div style="display:flex;flex-direction:column;gap:2px">
-                    <div style="height:10px;background:#1a1a1f;border-radius:2px;display:flex;align-items:center"><div style="width:16px;height:10px;background:#222;border-radius:2px 0 0 2px"></div></div>
-                    <div style="height:10px;background:#1a1a1f;border-radius:2px;display:flex;align-items:center"><div style="width:16px;height:10px;background:#222;border-radius:2px 0 0 2px"></div></div>
-                    <div style="height:10px;background:#1a1a1f;border-radius:2px;display:flex;align-items:center"><div style="width:16px;height:10px;background:#222;border-radius:2px 0 0 2px"></div></div>
-                  </div>
-                </div>
-                <div class="ui-option-info">
-                  <div class="ui-option-name">Compact List <span class="badge special" id="ui-active-badge-compact" style="display:none">Active</span></div>
-                  <div class="ui-option-desc">Dense list view, more games visible at once</div>
-                </div>
-              </div>
-
             </div>
           </div>
         </div>
@@ -3106,26 +3106,289 @@
     var UI_LAYOUTS = ['sidebar','minimal','magazine','compact'];
 
     function applyUILayout(layout) {
-      // Remove existing UI classes
       UI_LAYOUTS.forEach(function(u) { document.body.classList.remove('ui-'+u); });
       currentUI = layout;
       if (layout) document.body.classList.add('ui-'+layout);
-
-      // Show/hide sidebar
       var sidebar = document.getElementById("uz-sidebar");
       if (sidebar) sidebar.style.display = layout === 'sidebar' ? 'flex' : 'none';
-
-      // Update active badges
-      ['default','sidebar','minimal','magazine','compact'].forEach(function(u) {
-        var badge = document.getElementById("ui-active-badge-"+u);
-        var opt   = document.getElementById("ui-opt-"+u);
-        var isActive = (u === 'default' && !layout) || (u === layout);
-        if (badge) badge.style.display = isActive ? 'inline-block' : 'none';
-        if (opt)   opt.classList.toggle('active', isActive);
-      });
-
       db.collection("settings").doc("site").set({ uiLayout: layout }, { merge: true });
     }
+
+    // ── UI DESIGNER ──
+    var designerBlocks = [];
+    var selectedBlockIndex = -1;
+    var dragSrcIndex = -1;
+
+    var BLOCK_DEFS = {
+      header:   { label: '🔷 Header',   color: '#00e5ff', desc: 'Top navigation bar with logo and search' },
+      featured: { label: '⭐ Featured',  color: '#f59e0b', desc: 'Featured games carousel at the top' },
+      banner:   { label: '📢 Banner',    color: '#10b981', desc: 'Announcement banner strip' },
+      tabs:     { label: '📂 Tabs',      color: '#a855f7', desc: 'All Games / Extra / YT tab bar' },
+      games:    { label: '🎮 Games',     color: '#3b82f6', desc: 'Main game card grid' },
+      footer:   { label: '▬ Footer',    color: '#888899', desc: 'Bottom footer bar' },
+      spacer:   { label: '↕ Spacer',    color: '#334155', desc: 'Empty space between blocks' },
+      text:     { label: '📝 Text',      color: '#f472b6', desc: 'Custom text/HTML block' }
+    };
+
+    var PRESETS = {
+      default:  [{type:'header'},{type:'banner',props:{hidden:true}},{type:'featured'},{type:'tabs'},{type:'games'},{type:'footer'}],
+      sidebar:  [{type:'featured'},{type:'tabs'},{type:'games'}],
+      minimal:  [{type:'header',props:{compact:true}},{type:'tabs'},{type:'games'}],
+      magazine: [{type:'header',props:{light:true}},{type:'featured'},{type:'tabs'},{type:'games'},{type:'footer'}],
+      compact:  [{type:'header'},{type:'tabs'},{type:'games',props:{compact:true}},{type:'footer'}]
+    };
+
+    function loadPreset(name) {
+      designerBlocks = JSON.parse(JSON.stringify(PRESETS[name] || PRESETS.default));
+      selectedBlockIndex = -1;
+      renderDesigner();
+      updatePreview();
+    }
+
+    function addDesignerBlock(type) {
+      designerBlocks.push({ type: type, props: {}, id: Date.now() });
+      renderDesigner();
+      updatePreview();
+    }
+
+    function renderDesigner() {
+      var container = document.getElementById("designer-blocks");
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!designerBlocks.length) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem">No blocks. Add one below.</div>';
+        return;
+      }
+
+      designerBlocks.forEach(function(block, i) {
+        var def = BLOCK_DEFS[block.type] || { label: block.type, color: '#888' };
+        var el = document.createElement('div');
+        el.className = 'designer-block' + (i === selectedBlockIndex ? ' selected' : '');
+        el.draggable = true;
+        el.dataset.index = i;
+        el.innerHTML =
+          '<span class="db-drag">⠿</span>' +
+          '<span class="db-dot" style="background:' + def.color + '"></span>' +
+          '<span class="db-label">' + def.label + '</span>' +
+          (block.props && block.props.hidden ? '<span class="db-badge">hidden</span>' : '') +
+          '<button class="db-del" onclick="removeDesignerBlock('+i+',event)" title="Remove">✕</button>';
+
+        el.addEventListener('click', function() { selectBlock(i); });
+        el.addEventListener('dragstart', function(e) { dragSrcIndex = i; e.dataTransfer.effectAllowed = 'move'; el.style.opacity = '0.5'; });
+        el.addEventListener('dragend', function() { el.style.opacity = '1'; });
+        el.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; el.style.borderColor = 'var(--accent)'; });
+        el.addEventListener('dragleave', function() { el.style.borderColor = ''; });
+        el.addEventListener('drop', function(e) {
+          e.preventDefault(); el.style.borderColor = '';
+          if (dragSrcIndex === i) return;
+          var moved = designerBlocks.splice(dragSrcIndex, 1)[0];
+          designerBlocks.splice(i, 0, moved);
+          if (selectedBlockIndex === dragSrcIndex) selectedBlockIndex = i;
+          dragSrcIndex = -1;
+          renderDesigner();
+          updatePreview();
+        });
+
+        container.appendChild(el);
+      });
+    }
+
+    function selectBlock(i) {
+      selectedBlockIndex = i;
+      renderDesigner();
+      renderBlockProps(i);
+    }
+
+    function removeDesignerBlock(i, e) {
+      e.stopPropagation();
+      designerBlocks.splice(i, 1);
+      if (selectedBlockIndex >= designerBlocks.length) selectedBlockIndex = -1;
+      renderDesigner();
+      renderBlockProps(selectedBlockIndex);
+      updatePreview();
+    }
+
+    function renderBlockProps(i) {
+      var container = document.getElementById("designer-props");
+      if (!container) return;
+      if (i < 0 || i >= designerBlocks.length) {
+        container.innerHTML = '<span style="color:var(--muted)">Click a block to edit its properties.</span>';
+        return;
+      }
+      var block = designerBlocks[i];
+      var def = BLOCK_DEFS[block.type] || {};
+      var props = block.props || {};
+
+      var html = '<div style="margin-bottom:0.5rem"><strong style="color:var(--text)">' + (def.label||block.type) + '</strong><span style="color:var(--muted);font-size:0.75rem;margin-left:0.5rem">' + (def.desc||'') + '</span></div>';
+
+      // Common props
+      html += '<label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;cursor:pointer"><input type="checkbox" ' + (props.hidden?'checked':'') + ' onchange="setBlockProp('+i+',\'hidden\',this.checked)"> <span>Hidden</span></label>';
+
+      if (block.type === 'header') {
+        html += '<label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;cursor:pointer"><input type="checkbox" ' + (props.compact?'checked':'') + ' onchange="setBlockProp('+i+',\'compact\',this.checked)"> <span>Compact (smaller height)</span></label>';
+        html += '<label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;cursor:pointer"><input type="checkbox" ' + (props.sticky?'checked':'') + ' onchange="setBlockProp('+i+',\'sticky\',this.checked)"> <span>Sticky (fixed to top)</span></label>';
+      }
+      if (block.type === 'games') {
+        html += '<label style="display:block;margin-bottom:0.3rem">Columns: <input type="number" value="' + (props.cols||'auto') + '" min="1" max="8" onchange="setBlockProp('+i+',\'cols\',this.value)" style="width:60px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 6px;font-size:0.8rem;outline:none"></label>';
+        html += '<label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;cursor:pointer"><input type="checkbox" ' + (props.compact?'checked':'') + ' onchange="setBlockProp('+i+',\'compact\',this.checked)"> <span>List style (compact rows)</span></label>';
+      }
+      if (block.type === 'spacer') {
+        html += '<label style="display:block;margin-bottom:0.3rem">Height (px): <input type="number" value="' + (props.height||32) + '" min="4" max="200" onchange="setBlockProp('+i+',\'height\',this.value)" style="width:70px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 6px;font-size:0.8rem;outline:none"></label>';
+      }
+      if (block.type === 'text') {
+        html += '<label style="display:block;margin-bottom:0.3rem">Content:<br><textarea onchange="setBlockProp('+i+',\'content\',this.value)" style="width:100%;height:60px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px 6px;font-size:0.8rem;outline:none;resize:vertical;margin-top:2px">' + (props.content||'') + '</textarea></label>';
+      }
+      if (block.type === 'banner') {
+        html += '<label style="display:block;margin-bottom:0.3rem">Text: <input type="text" value="' + (props.text||'') + '" placeholder="Banner text..." onchange="setBlockProp('+i+',\'text\',this.value)" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 6px;font-size:0.8rem;outline:none;margin-top:2px"></label>';
+      }
+
+      html += '<div style="display:flex;gap:0.4rem;margin-top:0.6rem">';
+      html += '<button class="admin-btn" onclick="moveBlock('+i+',-1)" '+(i===0?'disabled':'')+' style="font-size:0.72rem;padding:0.2rem 0.5rem">↑ Up</button>';
+      html += '<button class="admin-btn" onclick="moveBlock('+i+',1)" '+(i===designerBlocks.length-1?'disabled':'')+' style="font-size:0.72rem;padding:0.2rem 0.5rem">↓ Down</button>';
+      html += '</div>';
+
+      container.innerHTML = html;
+    }
+
+    function setBlockProp(i, key, value) {
+      if (!designerBlocks[i].props) designerBlocks[i].props = {};
+      designerBlocks[i].props[key] = value;
+      renderDesigner();
+      updatePreview();
+    }
+
+    function moveBlock(i, dir) {
+      var ni = i + dir;
+      if (ni < 0 || ni >= designerBlocks.length) return;
+      var tmp = designerBlocks[i]; designerBlocks[i] = designerBlocks[ni]; designerBlocks[ni] = tmp;
+      selectedBlockIndex = ni;
+      renderDesigner();
+      renderBlockProps(ni);
+      updatePreview();
+    }
+
+    function updatePreview() {
+      var inner = document.getElementById("designer-preview-inner");
+      var outer = document.getElementById("designer-preview");
+      if (!inner || !outer) return;
+
+      var scale = outer.offsetWidth / 600;
+      inner.style.transform = 'scale('+scale+')';
+      inner.style.height = (220 / scale) + 'px';
+
+      var html = '<div style="font-family:sans-serif;font-size:10px;color:#e8e8f0;background:#0d0d0f;min-height:'+(220/scale)+'px">';
+      designerBlocks.forEach(function(block) {
+        var props = block.props || {};
+        if (props.hidden) return;
+        if (block.type === 'header') {
+          html += '<div style="background:#141417;padding:' + (props.compact?'4px':'8px') + ' 12px;border-bottom:1px solid #2a2a35;display:flex;align-items:center;justify-content:space-between;' + (props.sticky?'position:sticky;top:0;':'') + '">';
+          html += '<div style="font-weight:900;color:#00e5ff;font-size:11px">UnblockZone</div>';
+          html += '<div style="background:#1a1a1f;border:1px solid #2a2a35;border-radius:4px;padding:2px 8px;color:#888;font-size:9px">Search...</div></div>';
+        } else if (block.type === 'featured') {
+          html += '<div style="padding:8px 12px"><div style="font-size:8px;color:#00e5ff;margin-bottom:4px">// FEATURED</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px"><div style="height:36px;background:linear-gradient(135deg,#1a1a1f,#222);border-radius:4px;border:1px solid #2a2a35"></div><div style="height:36px;background:linear-gradient(135deg,#1a1a1f,#222);border-radius:4px;border:1px solid #2a2a35"></div></div></div>';
+        } else if (block.type === 'banner') {
+          html += '<div style="background:#00e5ff22;border-bottom:1px solid #00e5ff;padding:3px 12px;color:#00e5ff;font-size:8px;text-align:center">' + (props.text || '📢 Announcement banner') + '</div>';
+        } else if (block.type === 'tabs') {
+          html += '<div style="padding:0 12px;border-bottom:1px solid #2a2a35;display:flex;gap:8px"><span style="padding:4px 0;border-bottom:2px solid #00e5ff;color:#00e5ff;font-size:8px">All Games</span><span style="padding:4px 0;color:#888;font-size:8px">Extra</span><span style="padding:4px 0;color:#888;font-size:8px">YT</span></div>';
+        } else if (block.type === 'games') {
+          var cols = props.compact ? 1 : (props.cols || 3);
+          var cardH = props.compact ? '12px' : '28px';
+          html += '<div style="padding:8px 12px"><div style="display:grid;grid-template-columns:repeat('+cols+',1fr);gap:3px">';
+          for (var g=0;g<(props.compact?4:6);g++) html += '<div style="height:'+cardH+';background:#1a1a1f;border-radius:3px;border:1px solid #2a2a35"></div>';
+          html += '</div></div>';
+        } else if (block.type === 'footer') {
+          html += '<div style="background:#111115;border-top:1px solid #2a2a35;padding:5px 12px;display:flex;justify-content:space-between;color:#888;font-size:8px"><span>UnblockZone</span><span>Free / Fast / Unblocked</span></div>';
+        } else if (block.type === 'spacer') {
+          html += '<div style="height:' + (Math.round((props.height||32)*scale*0.3)) + 'px"></div>';
+        } else if (block.type === 'text') {
+          html += '<div style="padding:6px 12px;color:#888;font-size:8px">' + (props.content || 'Custom text block') + '</div>';
+        }
+      });
+      html += '</div>';
+      inner.innerHTML = html;
+    }
+
+    function publishUIDesign() {
+      if (!designerBlocks.length) return;
+      db.collection("settings").doc("uidesign").set({ blocks: designerBlocks, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      applyDesignToPage(designerBlocks);
+    }
+
+    function resetUIDesign() {
+      loadPreset('default');
+    }
+
+    function applyDesignToPage(blocks) {
+      // Apply block properties to actual page elements
+      blocks.forEach(function(block) {
+        var props = block.props || {};
+        if (block.type === 'header') {
+          var header = document.querySelector('header');
+          if (header) {
+            header.style.display = props.hidden ? 'none' : '';
+            header.style.height = props.compact ? '48px' : '';
+            header.style.position = props.sticky ? 'sticky' : '';
+          }
+        } else if (block.type === 'featured') {
+          var feat = document.getElementById('featured-section');
+          if (feat) feat.style.display = props.hidden ? 'none' : '';
+        } else if (block.type === 'banner') {
+          var banner = document.getElementById('site-banner');
+          if (banner && props.text) { banner.textContent = props.text; banner.style.display = 'block'; }
+        } else if (block.type === 'games') {
+          var grid = document.querySelector('.game-grid');
+          if (grid) {
+            grid.style.gridTemplateColumns = props.cols ? 'repeat('+props.cols+',1fr)' : '';
+            if (props.compact) document.body.classList.add('ui-compact');
+          }
+        } else if (block.type === 'footer') {
+          var footer = document.querySelector('footer');
+          if (footer) footer.style.display = props.hidden ? 'none' : '';
+        }
+      });
+
+      // Reorder actual DOM elements in main based on block order
+      var main = document.querySelector('main');
+      if (!main) return;
+      var featSection = document.getElementById('featured-section');
+      var tabsWrapper = main.querySelector('.tabs');
+      var gameGrid    = document.getElementById('game-grid');
+      var ytContent   = document.getElementById('yt-content');
+
+      blocks.forEach(function(block) {
+        if (block.props && block.props.hidden) return;
+        if (block.type === 'featured' && featSection) main.appendChild(featSection);
+        if (block.type === 'tabs' && tabsWrapper) main.appendChild(tabsWrapper);
+        if (block.type === 'games' && gameGrid) main.appendChild(gameGrid);
+      });
+    }
+
+    // Load saved design on startup
+    function loadSavedDesign() {
+      db.collection("settings").doc("uidesign").get().then(function(doc) {
+        if (!doc.exists) { loadPreset('default'); return; }
+        var saved = doc.data().blocks;
+        if (saved && saved.length) {
+          designerBlocks = saved;
+          applyDesignToPage(saved);
+        } else {
+          loadPreset('default');
+        }
+        renderDesigner();
+        updatePreview();
+      }).catch(function() { loadPreset('default'); });
+    }
+
+    // When UI tab opens, init designer
+    var _origSwitchAdminTab = switchAdminTab;
+    switchAdminTab = function(tab) {
+      _origSwitchAdminTab(tab);
+      if (tab === 'ui') {
+        renderDesigner();
+        updatePreview();
+      }
+    };
 
     // ── THEMES ──
     var THEMES = ['midnight','neon','sunset','ocean','purple','red','forest','gold','ice','cherry','matrix'];
@@ -3390,6 +3653,7 @@
     })();
 
     loadGames();
+    loadSavedDesign();
   </script>
 </body>
 </html>
