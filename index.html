@@ -1546,8 +1546,12 @@
         <button class="admin-tab-btn" id="atab-users"     onclick="switchAdminTab('users')">Users</button>
         <button class="admin-tab-btn" id="atab-games"     onclick="switchAdminTab('games')">Games</button>
         <button class="admin-tab-btn" id="atab-site"      onclick="switchAdminTab('site')">Site</button>
+        <button class="admin-tab-btn" id="atab-themes"    onclick="switchAdminTab('themes')">Themes</button>
+        <button class="admin-tab-btn" id="atab-appearance" onclick="switchAdminTab('appearance')">Appearance</button>
         <button class="admin-tab-btn" id="atab-broadcast" onclick="switchAdminTab('broadcast')">Broadcast</button>
+        <button class="admin-tab-btn" id="atab-notifs"    onclick="switchAdminTab('notifs')">Notifications</button>
         <button class="admin-tab-btn" id="atab-analytics" onclick="switchAdminTab('analytics')">Analytics</button>
+        <button class="admin-tab-btn" id="atab-security"  onclick="switchAdminTab('security')">Security</button>
         <button class="admin-tab-btn" id="atab-access"    onclick="switchAdminTab('access')">Access</button>
         <button class="admin-tab-btn" id="atab-ui"        onclick="switchAdminTab('ui')">UI</button>
       </div>
@@ -1632,26 +1636,6 @@
 
         <!-- SITE TAB -->
         <div id="atab-site-content" class="admin-tab-content" style="display:none">
-
-          <!-- THEMES -->
-          <div class="admin-section">
-            <div class="admin-section-title">Site Theme</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Applies to all users instantly.</div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem" id="theme-grid">
-              <button class="admin-btn" onclick="applyTheme('')" style="border-color:var(--accent)">Default</button>
-              <button class="admin-btn" onclick="applyTheme('midnight')" style="background:#000510;border-color:#60a5fa;color:#60a5fa">Midnight</button>
-              <button class="admin-btn" onclick="applyTheme('neon')" style="background:#0a0a0a;border-color:#39ff14;color:#39ff14">Neon</button>
-              <button class="admin-btn" onclick="applyTheme('sunset')" style="background:#1a0a00;border-color:#ff6b35;color:#ff6b35">Sunset</button>
-              <button class="admin-btn" onclick="applyTheme('ocean')" style="background:#000d1a;border-color:#00b4d8;color:#00b4d8">Ocean</button>
-              <button class="admin-btn" onclick="applyTheme('purple')" style="background:#0d0010;border-color:#c084fc;color:#c084fc">Purple</button>
-              <button class="admin-btn" onclick="applyTheme('red')" style="background:#0f0000;border-color:#ef4444;color:#ef4444">Red</button>
-              <button class="admin-btn" onclick="applyTheme('forest')" style="background:#020d04;border-color:#22c55e;color:#22c55e">Forest</button>
-              <button class="admin-btn" onclick="applyTheme('gold')" style="background:#0d0900;border-color:#fbbf24;color:#fbbf24">Gold</button>
-              <button class="admin-btn" onclick="applyTheme('ice')" style="background:#030f1a;border-color:#bfdbfe;color:#bfdbfe">Ice</button>
-              <button class="admin-btn" onclick="applyTheme('cherry')" style="background:#0f000a;border-color:#f472b6;color:#f472b6">Cherry</button>
-              <button class="admin-btn" onclick="applyTheme('matrix')" style="background:#000;border-color:#00ff41;color:#00ff41">Matrix</button>
-            </div>
-          </div>
 
           <!-- TAB VISIBILITY -->
           <div class="admin-section">
@@ -1750,6 +1734,160 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- THEMES TAB -->
+        <div id="atab-themes-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Choose Theme</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem">Applies instantly to all users. Animated themes have a ✨ indicator.</div>
+            <div id="themes-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem"></div>
+          </div>
+        </div>
+
+        <!-- APPEARANCE TAB -->
+        <div id="atab-appearance-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Typography</div>
+            <div class="admin-row">
+              <label>Body Font</label>
+              <select id="app-font" onchange="applyAppearance()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.35rem 0.6rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none">
+                <option value="">Default (Rajdhani)</option>
+                <option value="Inter">Inter</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Space Grotesk">Space Grotesk</option>
+                <option value="DM Sans">DM Sans</option>
+                <option value="Nunito">Nunito</option>
+                <option value="IBM Plex Mono">IBM Plex Mono</option>
+              </select>
+            </div>
+            <div class="admin-row">
+              <label>Logo Font</label>
+              <select id="app-logo-font" onchange="applyAppearance()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.35rem 0.6rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none">
+                <option value="">Default (Orbitron)</option>
+                <option value="Exo 2">Exo 2</option>
+                <option value="Rajdhani">Rajdhani</option>
+                <option value="Audiowide">Audiowide</option>
+                <option value="Michroma">Michroma</option>
+                <option value="Press Start 2P">Press Start 2P</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Cards</div>
+            <div class="admin-row">
+              <label>Border Radius</label>
+              <div style="display:flex;align-items:center;gap:0.5rem">
+                <input type="range" id="app-radius" min="0" max="24" value="12" oninput="applyAppearance();this.nextElementSibling.textContent=this.value+'px'" style="width:100px">
+                <span style="font-size:0.78rem;color:var(--muted);width:32px">12px</span>
+              </div>
+            </div>
+            <div class="admin-row">
+              <label>Card Gap</label>
+              <div style="display:flex;align-items:center;gap:0.5rem">
+                <input type="range" id="app-gap" min="4" max="32" value="12" oninput="applyAppearance();this.nextElementSibling.textContent=this.value+'px'" style="width:100px">
+                <span style="font-size:0.78rem;color:var(--muted);width:32px">12px</span>
+              </div>
+            </div>
+            <div class="admin-row">
+              <label>Card Size</label>
+              <div style="display:flex;align-items:center;gap:0.5rem">
+                <input type="range" id="app-cardsize" min="140" max="320" value="200" oninput="applyAppearance();this.nextElementSibling.textContent=this.value+'px'" style="width:100px">
+                <span style="font-size:0.78rem;color:var(--muted);width:36px">200px</span>
+              </div>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Header</div>
+            <div class="admin-row">
+              <label>Height</label>
+              <div style="display:flex;align-items:center;gap:0.5rem">
+                <input type="range" id="app-header-h" min="40" max="100" value="70" oninput="applyAppearance();this.nextElementSibling.textContent=this.value+'px'" style="width:100px">
+                <span style="font-size:0.78rem;color:var(--muted);width:36px">70px</span>
+              </div>
+            </div>
+            <div class="admin-row">
+              <label>Blur Background</label>
+              <button class="toggle-switch" id="app-header-blur" onclick="this.classList.toggle('on');applyAppearance()"></button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Animation Speed</div>
+            <div class="admin-row">
+              <label>Particle Speed</label>
+              <div style="display:flex;align-items:center;gap:0.5rem">
+                <input type="range" id="app-anim-speed" min="1" max="5" value="3" oninput="applyAppearance();this.nextElementSibling.textContent=['Slow','Slow','Normal','Fast','Very Fast'][this.value-1]" style="width:100px">
+                <span style="font-size:0.78rem;color:var(--muted);width:60px">Normal</span>
+              </div>
+            </div>
+          </div>
+          <div class="admin-row" style="margin-top:0.5rem">
+            <button class="admin-btn success" onclick="saveAppearance()">Save & Apply to All</button>
+            <button class="admin-btn" onclick="resetAppearance()">Reset</button>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS TAB -->
+        <div id="atab-notifs-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Schedule Broadcast</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Schedule a message to be sent to all users at a specific time.</div>
+            <div class="admin-row">
+              <input type="text" id="notif-title" placeholder="Notification title..." />
+            </div>
+            <div class="admin-row">
+              <input type="text" id="notif-msg" placeholder="Message..." />
+            </div>
+            <div class="admin-row">
+              <label style="font-size:0.82rem;color:var(--text);white-space:nowrap">Send at</label>
+              <input type="datetime-local" id="notif-time" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.35rem 0.6rem;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:0.82rem;outline:none;flex:1"/>
+              <button class="admin-btn success" onclick="scheduleNotif()">Schedule</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem">
+              <div class="admin-section-title" style="margin:0">Scheduled</div>
+              <button class="admin-btn" onclick="loadScheduledNotifs()" style="font-size:0.72rem;padding:0.2rem 0.5rem">Refresh</button>
+            </div>
+            <div id="scheduled-notifs-list"><div style="color:var(--muted);font-size:0.82rem">No scheduled notifications.</div></div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Recurring Alerts</div>
+            <div class="admin-row">
+              <label style="font-size:0.82rem;color:var(--text)">Show welcome message on login</label>
+              <button class="toggle-switch" id="notif-welcome-toggle" onclick="this.classList.toggle('on');saveNotifSettings()"></button>
+            </div>
+            <div class="admin-row" style="margin-top:0.3rem">
+              <input type="text" id="notif-welcome-msg" placeholder="Welcome message..." oninput="saveNotifSettings()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- SECURITY TAB -->
+        <div id="atab-security-content" class="admin-tab-content" style="display:none">
+          <div class="admin-section">
+            <div class="admin-section-title">Login Activity</div>
+            <div id="security-login-log" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Active Sessions</div>
+            <div id="security-sessions" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Failed Logins</div>
+            <div id="security-failed" style="font-size:0.82rem;color:var(--muted)">Loading...</div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-title">Security Actions</div>
+            <div class="admin-row">
+              <label>Force all users to re-login</label>
+              <button class="admin-btn danger" onclick="forceRelogin()">Force Re-login</button>
+            </div>
+            <div class="admin-row" style="margin-top:0.4rem">
+              <label>Clear all login logs</label>
+              <button class="admin-btn danger" onclick="clearLoginLogs()">Clear Logs</button>
+            </div>
+          </div>
         </div>
 
         <!-- BROADCAST TAB -->
@@ -2204,6 +2342,8 @@
 
         startPresence(result.id);
         initPanic();
+        logLogin(result.data.username, true);
+        checkWelcomeMessage();
 
         // Listen for real-time changes to this user (restriction, special access)
         db.collection("users").doc(result.id).onSnapshot(function(snap) {
@@ -2228,6 +2368,7 @@
       }).catch(function(e) {
         btn.classList.remove("loading"); btn.disabled = false;
         if (e.message === "restricted") return;
+        logLogin(username, false);
         err.classList.add("show");
         err.textContent = e.message === "wrong_password" ? "Incorrect password." : e.message;
       });
@@ -2760,15 +2901,21 @@
     }
 
     function switchAdminTab(tab) {
-      ['overview','users','games','site','broadcast','analytics','access','ui'].forEach(function(t) {
-        document.getElementById('atab-' + t).classList.toggle('active', t === tab);
-        document.getElementById('atab-' + t + '-content').style.display = t === tab ? 'block' : 'none';
+      ['overview','users','games','site','themes','appearance','broadcast','notifs','analytics','security','access','ui'].forEach(function(t) {
+        var btn = document.getElementById('atab-' + t);
+        var content = document.getElementById('atab-' + t + '-content');
+        if (btn) btn.classList.toggle('active', t === tab);
+        if (content) content.style.display = t === tab ? 'block' : 'none';
       });
       if (tab === 'access') renderAccessList();
       if (tab === 'users') renderUserTable(allUsersCache);
       if (tab === 'analytics') loadAnalytics();
       if (tab === 'games') loadAdminGames();
       if (tab === 'broadcast') loadBroadcastHistory();
+      if (tab === 'themes') renderThemesTab();
+      if (tab === 'security') loadSecurityData();
+      if (tab === 'notifs') loadScheduledNotifs();
+      if (tab === 'ui') { renderDesigner(); updatePreview(); }
     }
 
     function loadAdminData() {
@@ -3466,18 +3613,25 @@
       var sub  = document.getElementById("featured-subtitle");
       if (!grid) return;
 
+      function fallback() {
+        // No data yet — show random games from allZones
+        if (!allZones || !allZones.length) { grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem">Loading...</div>'; return; }
+        var shuffled = allZones.slice().sort(function() { return Math.random()-0.5; }).slice(0,4);
+        renderFeatured(shuffled.map(function(z) { return { id: String(z.id||z.name), name: z.name, likes: 0, plays: 0, zone: z }; }));
+      }
+
       if (featuredMode === 'liked') {
         if (sub) sub.textContent = "Most Liked";
         db.collection("votes").orderBy("likes","desc").limit(4).get().then(function(snap) {
-          if (snap.empty) { grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem">No votes yet.</div>'; return; }
-          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.id.replace(/_/g,' '), likes: d.data().likes, plays: 0 }; }));
-        }).catch(function() { grid.innerHTML = ''; });
+          if (snap.empty) { fallback(); return; }
+          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.id.replace(/_/g,' '), likes: d.data().likes||0, plays: 0 }; }));
+        }).catch(function() { fallback(); });
       } else {
         if (sub) sub.textContent = "Most Played";
         db.collection("gamestats").orderBy("plays","desc").limit(4).get().then(function(snap) {
-          if (snap.empty) { grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem">No plays yet.</div>'; return; }
-          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.data().name || d.id.replace(/_/g,' '), plays: d.data().plays, likes: 0 }; }));
-        }).catch(function() { grid.innerHTML = ''; });
+          if (snap.empty) { fallback(); return; }
+          renderFeatured(snap.docs.map(function(d) { return { id: d.id, name: d.data().name||d.id.replace(/_/g,' '), plays: d.data().plays||0, likes: 0 }; }));
+        }).catch(function() { fallback(); });
       }
     }
 
@@ -3486,22 +3640,24 @@
       if (!grid) return;
       grid.innerHTML = "";
       items.forEach(function(item) {
-        // Try to find the zone in allZones for cover image
-        var zone = allZones.find(function(z) {
+        // Use pre-resolved zone if provided, otherwise search allZones
+        var zone = item.zone || allZones.find(function(z) {
           return (z.id && String(z.id) === item.id) ||
-                 z.name.toLowerCase().replace(/\s+/g,'_') === item.id;
+                 z.name.toLowerCase().replace(/\s+/g,'_') === item.id ||
+                 z.name.toLowerCase() === item.name.toLowerCase();
         });
         var coverSrc = "";
         if (zone && zone.cover) {
           coverSrc = zone.custom ? zone.cover : zone.cover.replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
         }
-        var tag = featuredMode === 'liked' ? '👍 ' + item.likes + ' likes' : '🎮 ' + item.plays + ' plays';
+        var tag = item.likes > 0 ? '👍 ' + item.likes + ' likes' : item.plays > 0 ? '🎮 ' + item.plays + ' plays' : '🎮 Play';
 
         var card = document.createElement("div");
         card.className = "featured-card";
-        card.onclick = function() { if (zone) launchGame(zone); };
+        (function(z){ card.onclick = function() { if (z) launchGame(z); }; })(zone);
         card.innerHTML =
-          (coverSrc ? '<img src="' + coverSrc + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">' : '<div class="featured-placeholder"></div>') +
+          (coverSrc ? '<img src="' + coverSrc + '" alt="' + item.name + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">' : '') +
+          '<div class="featured-placeholder" ' + (coverSrc ? 'style="display:none"' : '') + '></div>' +
           '<div class="featured-card-overlay">' +
             '<div class="featured-card-tag">' + tag + '</div>' +
             '<div class="featured-card-name">' + item.name + '</div>' +
@@ -3589,6 +3745,284 @@
       if (size) setCardSize(size);
     }
 
+    // ── THEMES TAB ──
+    var ALL_THEMES = [
+      { id:'',        name:'Default',    bg:'#0d0d0f', accent:'#00e5ff', anim:false,  desc:'Original dark cyan' },
+      { id:'midnight',name:'Midnight',   bg:'#000510', accent:'#60a5fa', anim:true,   desc:'Deep blue snow ❄️' },
+      { id:'neon',    name:'Neon',       bg:'#0a0a0a', accent:'#39ff14', anim:true,   desc:'Floating neon orbs ✨' },
+      { id:'sunset',  name:'Sunset',     bg:'#1a0a00', accent:'#ff6b35', anim:true,   desc:'Falling embers 🔥' },
+      { id:'ocean',   name:'Ocean',      bg:'#000d1a', accent:'#00b4d8', anim:true,   desc:'Rising bubbles 🫧' },
+      { id:'purple',  name:'Purple',     bg:'#0d0010', accent:'#c084fc', anim:false,  desc:'Deep violet' },
+      { id:'red',     name:'Red',        bg:'#0f0000', accent:'#ef4444', anim:false,  desc:'Blood red' },
+      { id:'forest',  name:'Forest',     bg:'#020d04', accent:'#22c55e', anim:true,   desc:'Fireflies 🌿' },
+      { id:'gold',    name:'Gold',       bg:'#0d0900', accent:'#fbbf24', anim:true,   desc:'Sparkle burst ✴️' },
+      { id:'ice',     name:'Ice',        bg:'#030f1a', accent:'#bfdbfe', anim:true,   desc:'Snowfall ❄️' },
+      { id:'cherry',  name:'Cherry',     bg:'#0f000a', accent:'#f472b6', anim:true,   desc:'Falling petals 🌸' },
+      { id:'matrix',  name:'Matrix',     bg:'#000',    accent:'#00ff41', anim:true,   desc:'Digital rain 💻' },
+      { id:'void',    name:'Void',       bg:'#000',    accent:'#ffffff', anim:false,  desc:'Pure black & white' },
+      { id:'lava',    name:'Lava',       bg:'#0a0000', accent:'#ff3300', anim:true,   desc:'Lava bubbles 🌋' },
+      { id:'arctic',  name:'Arctic',     bg:'#e8f4fd', accent:'#0284c7', anim:false,  desc:'Light icy blue' },
+      { id:'galaxy',  name:'Galaxy',     bg:'#020010', accent:'#818cf8', anim:true,   desc:'Drifting stars ✨' },
+    ];
+
+    function renderThemesTab() {
+      var grid = document.getElementById("themes-grid");
+      if (!grid) return;
+      grid.innerHTML = ALL_THEMES.map(function(t) {
+        return '<div onclick="applyTheme(\'' + t.id + '\')" style="background:' + t.bg + ';border:2px solid ' + t.accent + ';border-radius:10px;padding:0.8rem;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s" onmouseover="this.style.transform=\'scale(1.03)\';this.style.boxShadow=\'0 0 16px ' + t.accent + '66\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'">' +
+          '<div style="font-family:\'Orbitron\',sans-serif;font-size:0.75rem;color:' + t.accent + ';margin-bottom:0.2rem;font-weight:700">' + t.name + (t.anim?' ✨':'') + '</div>' +
+          '<div style="font-size:0.68rem;color:' + t.accent + ';opacity:0.7">' + t.desc + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // Add extra themes to body classes
+    var EXTRA_THEME_CSS = [
+      'body.theme-void{--bg:#000;--surface:#0a0a0a;--card:#111;--border:#222;--accent:#fff;--accent2:#ccc;--text:#fff;--muted:#666}',
+      'body.theme-lava{--bg:#0a0000;--surface:#140000;--card:#1c0000;--border:#330000;--accent:#ff3300;--accent2:#cc2200;--glow:0 0 20px rgba(255,51,0,0.3)}',
+      'body.theme-arctic{--bg:#e8f4fd;--surface:#f0f8ff;--card:#fff;--border:#bde0f7;--accent:#0284c7;--accent2:#0369a1;--text:#0c2340;--muted:#5b8fb0}',
+      'body.theme-galaxy{--bg:#020010;--surface:#060020;--card:#0a0030;--border:#150050;--accent:#818cf8;--accent2:#6366f1;--glow:0 0 20px rgba(129,140,248,0.25)}'
+    ];
+    var extraStyleEl = document.getElementById('uz-extra-themes');
+    if (!extraStyleEl) {
+      extraStyleEl = document.createElement('style');
+      extraStyleEl.id = 'uz-extra-themes';
+      extraStyleEl.textContent = EXTRA_THEME_CSS.join('');
+      document.head.appendChild(extraStyleEl);
+    }
+
+    // Extra animations for new themes
+    var _origStartAnimation = startAnimation;
+    startAnimation = function(theme) {
+      _origStartAnimation(theme);
+      var canvas = document.getElementById("theme-canvas");
+      if (!canvas) return;
+      var ctx = canvas.getContext("2d");
+      var speedMult = parseFloat(localStorage.getItem('uz_anim_speed') || '1');
+
+      if (theme === 'lava') {
+        stopAnimation();
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        for (var i=0;i<30;i++) animParticles.push({x:Math.random()*canvas.width,y:canvas.height+Math.random()*200,r:Math.random()*12+4,speed:(Math.random()*0.5+0.2)*speedMult,phase:Math.random()*Math.PI*2});
+        (function lava(){
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          animParticles.forEach(function(p){
+            var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+            g.addColorStop(0,'rgba(255,200,0,0.6)'); g.addColorStop(0.5,'rgba(255,60,0,0.4)'); g.addColorStop(1,'rgba(200,0,0,0)');
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+            p.y-=p.speed; p.x+=Math.sin(Date.now()/1000+p.phase)*0.4;
+            if(p.y<-p.r){p.y=canvas.height+p.r;p.x=Math.random()*canvas.width;}
+          });
+          animFrame=requestAnimationFrame(lava);
+        })();
+      } else if (theme === 'galaxy') {
+        stopAnimation();
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        for (var i=0;i<150;i++) animParticles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.15*speedMult,vy:(Math.random()-0.5)*0.15*speedMult,opacity:Math.random(),twinkle:Math.random()*Math.PI*2});
+        (function galaxy(){
+          ctx.fillStyle='rgba(2,0,16,0.2)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+          animParticles.forEach(function(p){
+            p.twinkle+=0.05; var op=0.3+Math.sin(p.twinkle)*0.5;
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+            ctx.fillStyle='rgba(180,180,255,'+op+')'; ctx.fill();
+            p.x+=p.vx; p.y+=p.vy;
+            if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+            if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+          });
+          animFrame=requestAnimationFrame(galaxy);
+        })();
+      }
+    };
+
+    // ── APPEARANCE ──
+    var appearanceSettings = {};
+    function applyAppearance() {
+      var font     = document.getElementById('app-font') ? document.getElementById('app-font').value : '';
+      var logoFont = document.getElementById('app-logo-font') ? document.getElementById('app-logo-font').value : '';
+      var radius   = document.getElementById('app-radius') ? document.getElementById('app-radius').value : 12;
+      var gap      = document.getElementById('app-gap') ? document.getElementById('app-gap').value : 12;
+      var cardsize = document.getElementById('app-cardsize') ? document.getElementById('app-cardsize').value : 200;
+      var headerH  = document.getElementById('app-header-h') ? document.getElementById('app-header-h').value : 70;
+      var animSpeed= document.getElementById('app-anim-speed') ? document.getElementById('app-anim-speed').value : 3;
+      var blur     = document.getElementById('app-header-blur') ? document.getElementById('app-header-blur').classList.contains('on') : true;
+
+      appearanceSettings = { font, logoFont, radius, gap, cardsize, headerH, animSpeed, blur };
+      _applyAppearanceToDOM(appearanceSettings);
+    }
+    function _applyAppearanceToDOM(s) {
+      var el = document.getElementById('uz-appearance-style');
+      if (!el) { el = document.createElement('style'); el.id = 'uz-appearance-style'; document.head.appendChild(el); }
+      var css = '';
+      if (s.font) css += 'body,input,button,.card-name,.tab-btn{font-family:"'+s.font+'",sans-serif!important}';
+      if (s.logoFont) {
+        css += '@import url("https://fonts.googleapis.com/css2?family='+s.logoFont.replace(/ /g,'+')+'&display=swap");';
+        css += '.logo,.login-logo,.footer-logo{font-family:"'+s.logoFont+'",sans-serif!important}';
+      }
+      css += '.game-card,.featured-card,.modal-inner,.admin-panel{border-radius:'+s.radius+'px!important}';
+      css += '.game-grid{gap:'+s.gap+'px!important;grid-template-columns:repeat(auto-fill,minmax('+s.cardsize+'px,1fr))!important}';
+      css += 'header{height:'+s.headerH+'px!important}';
+      if (!s.blur) css += 'header{backdrop-filter:none!important}';
+      el.textContent = css;
+      localStorage.setItem('uz_anim_speed', (s.animSpeed||3)/3);
+    }
+    function saveAppearance() {
+      applyAppearance();
+      db.collection("settings").doc("appearance").set(appearanceSettings, { merge: true });
+    }
+    function resetAppearance() {
+      db.collection("settings").doc("appearance").set({});
+      var el = document.getElementById('uz-appearance-style');
+      if (el) el.textContent = '';
+    }
+    function loadAppearance() {
+      db.collection("settings").doc("appearance").onSnapshot(function(doc) {
+        if (!doc.exists) return;
+        _applyAppearanceToDOM(doc.data());
+      });
+    }
+
+    // ── NOTIFICATIONS / SCHEDULED BROADCASTS ──
+    function scheduleNotif() {
+      var title = document.getElementById('notif-title').value.trim();
+      var msg   = document.getElementById('notif-msg').value.trim();
+      var time  = document.getElementById('notif-time').value;
+      if (!msg || !time) return;
+      var ts = new Date(time).getTime();
+      db.collection("scheduledNotifs").add({ title: title||'Announcement', message: msg, sendAt: ts, sent: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      document.getElementById('notif-title').value = '';
+      document.getElementById('notif-msg').value = '';
+      document.getElementById('notif-time').value = '';
+      loadScheduledNotifs();
+    }
+    function loadScheduledNotifs() {
+      var container = document.getElementById('scheduled-notifs-list');
+      if (!container) return;
+      db.collection("scheduledNotifs").orderBy("sendAt","asc").get().then(function(snap) {
+        if (snap.empty) { container.innerHTML = '<div style="color:var(--muted);font-size:0.82rem">No scheduled notifications.</div>'; return; }
+        container.innerHTML = snap.docs.map(function(doc) {
+          var d = doc.data();
+          var t = new Date(d.sendAt).toLocaleString();
+          var badge = d.sent ? '<span class="badge online">Sent</span>' : '<span style="color:var(--accent);font-size:0.72rem">Pending</span>';
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--border)">' +
+            '<div><strong style="font-size:0.82rem">' + d.title + '</strong> <span style="color:var(--muted);font-size:0.75rem">— ' + d.message + '</span></div>' +
+            '<div style="display:flex;align-items:center;gap:0.5rem">' + badge + '<span style="color:var(--muted);font-size:0.72rem">' + t + '</span>' +
+            '<button class="admin-btn danger" onclick="deleteNotif(\'' + doc.id + '\')" style="font-size:0.7rem;padding:0.15rem 0.4rem">Del</button></div>' +
+          '</div>';
+        }).join('');
+      });
+    }
+    function deleteNotif(id) { db.collection("scheduledNotifs").doc(id).delete().then(loadScheduledNotifs); }
+    function saveNotifSettings() {
+      var on  = document.getElementById('notif-welcome-toggle') && document.getElementById('notif-welcome-toggle').classList.contains('on');
+      var msg = document.getElementById('notif-welcome-msg') ? document.getElementById('notif-welcome-msg').value.trim() : '';
+      db.collection("settings").doc("notifs").set({ welcomeEnabled: on, welcomeMsg: msg }, { merge: true });
+    }
+
+    // Check scheduled notifs every minute
+    setInterval(function() {
+      if (!isAdmin) return;
+      db.collection("scheduledNotifs").where("sent","==",false).get().then(function(snap) {
+        snap.docs.forEach(function(doc) {
+          var d = doc.data();
+          if (Date.now() >= d.sendAt) {
+            db.collection("settings").doc("broadcast").set({ title: d.title, message: d.message, sentAt: firebase.firestore.FieldValue.serverTimestamp(), id: Date.now() });
+            doc.ref.update({ sent: true });
+          }
+        });
+      });
+    }, 60000);
+
+    // Welcome message on login
+    function checkWelcomeMessage() {
+      db.collection("settings").doc("notifs").get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        if (d.welcomeEnabled && d.welcomeMsg) {
+          setTimeout(function() {
+            document.getElementById("broadcast-title").textContent = "Welcome!";
+            document.getElementById("broadcast-msg").textContent = d.welcomeMsg;
+            document.getElementById("broadcast-popup").classList.add("show");
+          }, 1500);
+        }
+      });
+    }
+
+    // ── SECURITY ──
+    function loadSecurityData() {
+      // Active sessions
+      var sessEl = document.getElementById("security-sessions");
+      if (sessEl) {
+        var online = allUsersCache.filter(function(u){return u.online;});
+        sessEl.innerHTML = online.length ? online.map(function(u){
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)">' +
+            '<span><span style="color:#10b981">●</span> <strong>' + u.username + '</strong></span>' +
+            '<span style="color:var(--muted);font-size:0.75rem">' + (u.currentGame ? '🎮 ' + u.currentGame : 'Browsing') + '</span>' +
+          '</div>';
+        }).join('') : '<span style="color:var(--muted)">No active sessions.</span>';
+      }
+      // Login log
+      db.collection("loginLogs").orderBy("at","desc").limit(20).get().then(function(snap) {
+        var logEl = document.getElementById("security-login-log");
+        if (!logEl) return;
+        if (snap.empty) { logEl.innerHTML = '<span style="color:var(--muted)">No login logs yet.</span>'; return; }
+        logEl.innerHTML = snap.docs.map(function(doc) {
+          var d = doc.data();
+          var t = d.at ? new Date(d.at.seconds*1000).toLocaleString() : '';
+          var color = d.success ? '#10b981' : '#ff4d6d';
+          var icon  = d.success ? '✓' : '✗';
+          return '<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)">' +
+            '<span style="color:'+color+'">' + icon + ' </span><strong style="font-size:0.82rem;margin-left:4px">' + (d.username||'?') + '</strong>' +
+            '<span style="color:var(--muted);font-size:0.75rem">' + t + '</span>' +
+          '</div>';
+        }).join('');
+      });
+      // Failed logins
+      db.collection("loginLogs").where("success","==",false).orderBy("at","desc").limit(10).get().then(function(snap) {
+        var failEl = document.getElementById("security-failed");
+        if (!failEl) return;
+        if (snap.empty) { failEl.innerHTML = '<span style="color:var(--muted)">No failed attempts.</span>'; return; }
+        failEl.innerHTML = '<div style="color:#ff4d6d;font-size:0.82rem">' + snap.size + ' failed login attempt(s) recently.</div>' +
+          snap.docs.map(function(doc) {
+            var d = doc.data();
+            return '<div style="font-size:0.78rem;color:var(--muted);padding:0.2rem 0">✗ <strong>' + (d.username||'?') + '</strong> — ' + (d.at?new Date(d.at.seconds*1000).toLocaleString():'') + '</div>';
+          }).join('');
+      });
+    }
+    function forceRelogin() {
+      if (!confirm("Force all users to re-login? This will clear all sessions.")) return;
+      db.collection("settings").doc("site").set({ forceRelogin: Date.now() }, { merge: true });
+    }
+    function clearLoginLogs() {
+      if (!confirm("Clear all login logs?")) return;
+      db.collection("loginLogs").get().then(function(snap) {
+        var batch = db.batch();
+        snap.docs.forEach(function(doc) { batch.delete(doc.ref); });
+        batch.commit();
+        loadSecurityData();
+      });
+    }
+
+    // Log logins to Firestore for security tab
+    function logLogin(username, success) {
+      db.collection("loginLogs").add({ username: username, success: success, at: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+
+    // Listen for force re-login signal
+    db.collection("settings").doc("site").onSnapshot(function(doc) {
+      if (!doc.exists || isAdmin) return;
+      var d = doc.data();
+      if (d.forceRelogin) {
+        var stored = localStorage.getItem("uz_force_relogin");
+        if (stored !== String(d.forceRelogin)) {
+          localStorage.setItem("uz_force_relogin", String(d.forceRelogin));
+          localStorage.removeItem("uz_session");
+          location.reload();
+        }
+      }
+    });
+
     // ── BOOT ──
     restoreSettings();
 
@@ -3654,6 +4088,7 @@
 
     loadGames();
     loadSavedDesign();
+    loadAppearance();
   </script>
 </body>
 </html>
