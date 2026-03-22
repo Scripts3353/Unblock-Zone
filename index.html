@@ -16,68 +16,71 @@
   }
   body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-  #sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform .3s ease; }
-  #sidebar.collapsed { transform: translateX(-260px); }
-
-  .sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .logo-mark { width: 34px; height: 34px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 16px var(--accent-glow); flex-shrink: 0; }
+  #sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 300px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform .3s ease; }
+  #sidebar.collapsed { transform: translateX(-300px); }
+  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .logo-mark { width: 38px; height: 38px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 16px var(--accent-glow); flex-shrink: 0; }
   .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
-  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--text); }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.5px; color: var(--text); }
   .logo-text span { color: var(--accent2); }
 
   .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .sidebar-tab { flex: 1; padding: 10px 0; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all .2s; }
+  .sidebar-tab { flex: 1; padding: 12px 0; background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all .2s; }
   .sidebar-tab:hover { color: var(--text-muted); }
   .sidebar-tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
 
   #tab-chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   #tab-chat.hidden { display: none; }
-
-  .new-chat-btn { margin: 12px 12px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 9px 14px; border-radius: 10px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: all .2s; flex-shrink: 0; }
+  .new-chat-btn { margin: 14px 14px 8px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 12px; display: flex; align-items: center; gap: 8px; transition: all .2s; flex-shrink: 0; }
   .new-chat-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
-
-  .chat-history { flex: 1; overflow-y: auto; padding: 6px 8px; }
+  .chat-history { flex: 1; overflow-y: auto; padding: 8px 10px; }
   .chat-history::-webkit-scrollbar { width: 4px; }
   .chat-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  .history-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 8px 8px 4px; }
-  .history-item { padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: all .15s; display: flex; align-items: center; gap: 6px; }
+  .history-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 8px 8px 6px; }
+  .history-item { padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: all .15s; display: flex; align-items: center; gap: 6px; }
   .history-item-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .history-item:hover { background: var(--surface2); color: var(--text); }
   .history-item.active { background: var(--surface2); color: var(--accent2); }
   .delete-chat-btn { flex-shrink: 0; background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 2px 4px; border-radius: 4px; display: none; align-items: center; transition: color .15s; line-height: 1; }
   .history-item:hover .delete-chat-btn { display: flex; }
   .delete-chat-btn:hover { color: var(--danger); }
-
-  .sidebar-footer { padding: 12px 14px; border-top: 1px solid var(--border); flex-shrink: 0; }
-  .model-selector { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 12px; padding: 8px 28px 8px 10px; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237070a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+  .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .model-selector { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 12px; padding: 9px 28px 9px 12px; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237070a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
   .model-selector:focus { border-color: var(--accent); }
 
   /* API Keys tab */
-  #tab-apikeys { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 14px; gap: 12px; }
+  #tab-apikeys { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 16px; gap: 14px; }
   #tab-apikeys.visible { display: flex; }
   #tab-apikeys::-webkit-scrollbar { width: 4px; }
   #tab-apikeys::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  .apikeys-heading { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); }
-  .apikeys-sub { font-size: 11px; color: var(--text-muted); line-height: 1.65; }
-
-  .req-field { display: flex; flex-direction: column; gap: 5px; }
+  .apikeys-heading { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); }
+  .apikeys-sub { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+  .section-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; }
+  .req-field { display: flex; flex-direction: column; gap: 6px; }
   .req-field label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-  .req-field input, .req-field textarea {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px;
-    padding: 9px 11px; outline: none; transition: border-color .2s; width: 100%;
-  }
+  .req-field input, .req-field textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 10px 12px; outline: none; transition: border-color .2s; width: 100%; }
   .req-field input:focus, .req-field textarea:focus { border-color: var(--accent); }
-  .req-field textarea { resize: none; height: 70px; }
-
-  .req-submit-btn { width: 100%; background: var(--accent); border: none; border-radius: 10px; color: #fff; font-family: 'DM Mono', monospace; font-size: 12px; padding: 10px; cursor: pointer; transition: all .2s; box-shadow: 0 0 12px var(--accent-glow); }
+  .req-field textarea { resize: none; height: 76px; }
+  .req-submit-btn { width: 100%; background: var(--accent); border: none; border-radius: 10px; color: #fff; font-family: 'DM Mono', monospace; font-size: 12px; padding: 11px; cursor: pointer; transition: all .2s; box-shadow: 0 0 12px var(--accent-glow); }
   .req-submit-btn:hover { background: var(--accent2); }
   .req-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
-
   .req-success { background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.25); border-radius: 10px; padding: 12px; font-size: 11px; color: var(--green); line-height: 1.6; display: none; }
   .req-success.visible { display: block; }
-  .section-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; }
+  .req-pending { background: rgba(124,111,247,.08); border: 1px solid rgba(124,111,247,.2); border-radius: 10px; padding: 12px; font-size: 11px; color: var(--accent2); line-height: 1.6; display: none; }
+  .req-pending.visible { display: block; }
+
+  /* Approved key card */
+  .key-approved-card { background: rgba(74,222,128,.07); border: 1px solid rgba(74,222,128,.2); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; display: none; }
+  .key-approved-card.visible { display: flex; }
+  .key-approved-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; color: var(--green); }
+  .key-approved-sub { font-size: 11px; color: var(--text-muted); }
+  .key-val-row { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 7px 10px; }
+  .key-val-text { flex: 1; font-size: 10px; color: var(--accent2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .key-copy-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 6px; border-radius: 4px; transition: color .15s; flex-shrink: 0; }
+  .key-copy-btn:hover { color: var(--accent2); }
+  .key-expiry { font-size: 10px; color: var(--text-muted); }
+  .key-expiry span { color: var(--green); }
+
   .usage-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 11px; color: var(--text-muted); }
   .usage-url-row { display: flex; align-items: center; gap: 8px; }
   .usage-url { flex: 1; color: var(--accent2); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -86,10 +89,20 @@
   .usage-box b { color: var(--accent2); display: block; font-size: 11px; margin-bottom: 4px; }
   .usage-box pre { background: var(--surface); border-radius: 6px; padding: 8px 10px; font-size: 10px; color: var(--text); overflow-x: auto; white-space: pre-wrap; word-break: break-all; margin-bottom: 4px; }
 
-  /* Main */
-  #main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; height: 100dvh; transition: margin-left .3s ease; }
-  #main.expanded { margin-left: 0; }
+  /* Device ID badge */
+  #device-badge { position: fixed; bottom: 12px; right: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 10px; color: var(--text-dim); z-index: 200; cursor: default; user-select: all; }
+  #device-badge:hover { color: var(--text-muted); }
 
+  /* Endpoint change notification */
+  #endpoint-notif { position: fixed; top: 0; left: 300px; right: 0; background: rgba(124,111,247,.15); border-bottom: 1px solid rgba(124,111,247,.3); padding: 10px 20px; font-size: 12px; color: var(--accent2); display: none; align-items: center; gap: 10px; z-index: 300; transition: left .3s; }
+  #endpoint-notif.visible { display: flex; }
+  #endpoint-notif.sidebar-collapsed { left: 0; }
+  .notif-dismiss { margin-left: auto; background: none; border: none; color: var(--accent2); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 11px; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(124,111,247,.3); }
+  .notif-dismiss:hover { background: rgba(124,111,247,.2); }
+
+  /* Main */
+  #main { margin-left: 300px; flex: 1; display: flex; flex-direction: column; height: 100dvh; transition: margin-left .3s ease; }
+  #main.expanded { margin-left: 0; }
   #topbar { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg); flex-shrink: 0; }
   #toggle-sidebar { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 6px; transition: color .15s; display: flex; align-items: center; }
   #toggle-sidebar:hover { color: var(--text); }
@@ -102,16 +115,13 @@
   #messages { flex: 1; overflow-y: auto; padding: 24px 0; scroll-behavior: smooth; }
   #messages::-webkit-scrollbar { width: 4px; }
   #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
   .message-row { padding: 6px 24px; display: flex; gap: 14px; max-width: 860px; margin: 0 auto; width: 100%; animation: fadeUp .3s ease; align-items: flex-end; }
   .message-row.user-row { flex-direction: row-reverse; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
   .avatar { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: grid; place-items: center; font-size: 13px; font-family: 'Syne', sans-serif; font-weight: 700; }
   .avatar.user { background: #1e1b4b; color: var(--accent2); border: 1px solid #3730a3; }
   .avatar.ai { background: var(--surface2); overflow: hidden; border: 1px solid var(--border); box-shadow: 0 0 10px var(--accent-glow); }
   .avatar.ai img { width: 100%; height: 100%; object-fit: cover; }
-
   .bubble { line-height: 1.75; font-size: 14px; color: var(--text); padding: 10px 16px; border-radius: 16px; max-width: 72%; }
   .bubble.user { background: #1e1b4b; color: #c4b5fd; border: 1px solid #3730a3; border-bottom-right-radius: 4px; }
   .bubble.ai { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
@@ -140,37 +150,89 @@
   #input-area { padding: 16px 24px 20px; background: var(--bg); border-top: 1px solid var(--border); flex-shrink: 0; }
   .input-wrap { max-width: 860px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; align-items: flex-end; transition: border-color .2s; overflow: hidden; }
   .input-wrap:focus-within { border-color: var(--accent); }
-
   #unnamed-btn { margin: 10px 0 10px 10px; width: 38px; height: 38px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: all .2s; }
   #unnamed-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
-
   #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px; padding: 16px 18px; resize: none; max-height: 200px; line-height: 1.6; min-height: 54px; }
   #user-input::placeholder { color: var(--text-dim); }
   #user-input:disabled { opacity: .5; }
-
   #send-btn { margin: 10px; width: 38px; height: 38px; background: var(--accent); border: none; border-radius: 10px; color: #fff; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: all .2s; box-shadow: 0 0 12px var(--accent-glow); }
   #send-btn:hover:not(:disabled) { background: var(--accent2); transform: scale(1.05); }
   #send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
   #stop-btn { margin: 10px; width: 38px; height: 38px; background: var(--danger); border: none; border-radius: 10px; color: #fff; cursor: pointer; display: none; place-items: center; flex-shrink: 0; }
   #stop-btn.visible { display: grid; }
-
   #error-banner { display: none; background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--danger); max-width: 860px; margin: 0 auto 10px; }
   #error-banner.visible { display: block; }
-
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(--text); opacity: 0; transform: translateY(6px); transition: all .3s; pointer-events: none; z-index: 999; }
+  .toast { position: fixed; bottom: 40px; right: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(--text); opacity: 0; transform: translateY(6px); transition: all .3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; transform: translateY(0); }
   * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+  /* ── Mobile bottom nav ── */
+  #mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; flex-direction: row; height: 60px; }
+  .mobile-nav-btn { flex: 1; background: none; border: none; color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: color .2s; text-transform: uppercase; letter-spacing: 0.8px; }
+  .mobile-nav-btn svg { flex-shrink: 0; }
+  .mobile-nav-btn.active { color: var(--accent2); }
+
+  /* ── Mobile sidebar overlay ── */
+  #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 99; }
+  #sidebar-overlay.visible { display: block; }
+
+  @media (max-width: 768px) {
+    #sidebar {
+      width: 280px;
+      transform: translateX(-280px);
+      z-index: 200;
+      top: 0; bottom: 60px;
+    }
+    #sidebar.mobile-open { transform: translateX(0); }
+    #sidebar.collapsed { transform: translateX(-280px); }
+
+    #main { margin-left: 0 !important; padding-bottom: 60px; }
+
+    #mobile-nav { display: flex; }
+
+    #toggle-sidebar { display: none; }
+
+    #topbar { padding: 12px 16px; }
+    .topbar-title { font-size: 14px; }
+
+    .message-row { padding: 6px 14px; }
+    .bubble { max-width: 85%; font-size: 13px; }
+
+    #input-area { padding: 10px 12px 12px; }
+    .input-wrap { border-radius: 12px; }
+    #user-input { font-size: 16px; padding: 12px 14px; min-height: 48px; }
+    #send-btn { margin: 8px; width: 36px; height: 36px; }
+    #stop-btn { margin: 8px; width: 36px; height: 36px; }
+    #unnamed-btn { margin: 8px 0 8px 8px; width: 36px; height: 36px; }
+
+    .starter-grid { grid-template-columns: 1fr; max-width: 100%; }
+    .welcome-title { font-size: 24px; }
+
+    #device-badge { bottom: 68px; right: 10px; font-size: 9px; }
+
+    #endpoint-notif { left: 0 !important; }
+
+    .status-dot { display: none; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Sidebar overlay for mobile -->
+<div id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+<!-- Endpoint change notification -->
+<div id="endpoint-notif">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+  <span id="endpoint-notif-text">The API endpoint has changed. Refresh your code to use the new URL.</span>
+  <button class="notif-dismiss" onclick="dismissEndpointNotif()">Dismiss</button>
+</div>
 
 <aside id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div>
     <div class="logo-text">Gip<span>py</span></div>
   </div>
-
   <div class="sidebar-tabs">
     <button class="sidebar-tab active" id="tab-chat-btn" onclick="switchTab('chat')">Chat</button>
     <button class="sidebar-tab" id="tab-apikeys-btn" onclick="switchTab('apikeys')">API Keys</button>
@@ -192,16 +254,35 @@
 
   <div id="tab-apikeys">
     <div class="apikeys-heading">API Access</div>
-    <div class="apikeys-sub">Use Gippy in your own projects. Request a key and use the live endpoint below.</div>
+    <div class="apikeys-sub">Request a key to use Gippy in your own projects.</div>
 
-    <div class="section-label">Request a Key</div>
-    <div class="req-field"><label>Name</label><input type="text" id="req-name" placeholder="Your name"></div>
-    <div class="req-field"><label>Email</label><input type="email" id="req-email" placeholder="you@example.com"></div>
-    <div class="req-field"><label>What will you use it for?</label><textarea id="req-reason" placeholder="Discord bot, website, etc."></textarea></div>
-    <button class="req-submit-btn" id="req-submit-btn" onclick="submitRequest()">Submit Request</button>
-    <div class="req-success" id="req-success">Request sent! The admin will review and email your API key.</div>
+    <!-- Request form (shown if no pending/approved request) -->
+    <div id="req-form-wrap">
+      <div class="section-label">Request a Key</div>
+      <div class="req-field"><label>Name</label><input type="text" id="req-name" placeholder="Your name"></div>
+      <div class="req-field"><label>Email</label><input type="email" id="req-email" placeholder="you@example.com"></div>
+      <div class="req-field"><label>What will you use it for?</label><textarea id="req-reason" placeholder="Discord bot, website, etc."></textarea></div>
+      <button class="req-submit-btn" id="req-submit-btn" onclick="submitRequest()">Submit Request</button>
+      <div class="req-success" id="req-success">Request sent! The admin will review it and get back to you.</div>
+    </div>
 
-    <div class="section-label" style="margin-top:4px">Live Endpoint</div>
+    <!-- Pending state -->
+    <div class="req-pending" id="req-pending">
+      Your request is pending review. The admin will approve it soon.
+    </div>
+
+    <!-- Approved key card -->
+    <div class="key-approved-card" id="key-approved-card">
+      <div class="key-approved-title">API Key Approved!</div>
+      <div class="key-approved-sub">Your key is active. Keep it secret.</div>
+      <div class="key-val-row">
+        <span class="key-val-text" id="approved-key-text"></span>
+        <button class="key-copy-btn" onclick="copyApprovedKey()">copy</button>
+      </div>
+      <div class="key-expiry">Expires: <span id="approved-key-expiry"></span></div>
+    </div>
+
+    <div class="section-label">Live Endpoint</div>
     <div class="usage-box">
       <div class="usage-url-row">
         <span id="live-url" class="usage-url">Loading…</span>
@@ -211,11 +292,11 @@
 
     <div class="section-label">How to Use</div>
     <div class="usage-box">
-      <b>Python</b>
+      <b>Python (with chat history)</b>
       <pre id="code-python">Loading…</pre>
-      <b style="margin-top:10px;display:block">Discord Bot (Python)</b>
+      <b style="margin-top:10px;display:block">Discord Bot</b>
       <pre id="code-discord">Loading…</pre>
-      <b style="margin-top:10px;display:block">JavaScript / Fetch</b>
+      <b style="margin-top:10px;display:block">JavaScript</b>
       <pre id="code-js">Loading…</pre>
     </div>
   </div>
@@ -232,7 +313,6 @@
       <span id="status-text">Connecting…</span>
     </div>
   </div>
-
   <div id="messages">
     <div id="welcome">
       <div class="welcome-logo"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div>
@@ -246,7 +326,6 @@
       </div>
     </div>
   </div>
-
   <div id="input-area">
     <div id="error-banner"></div>
     <div class="input-wrap">
@@ -264,43 +343,207 @@
   </div>
 </div>
 
+<!-- Device ID badge -->
+<div id="device-badge"></div>
+<!-- Mobile bottom nav -->
+<nav id="mobile-nav">
+  <button class="mobile-nav-btn active" id="mnav-chat" onclick="mobileNav('chat')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat
+  </button>
+  <button class="mobile-nav-btn" id="mnav-history" onclick="mobileNav('history')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+    History
+  </button>
+  <button class="mobile-nav-btn" id="mnav-new" onclick="newChat()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    New
+  </button>
+  <button class="mobile-nav-btn" id="mnav-api" onclick="mobileNav('apikeys')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+    API Keys
+  </button>
+</nav>
+
 <div class="toast" id="toast"></div>
 
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ╔══════════════════════════════════════════════════╗
+// ║   PASTE YOUR FIREBASE CONFIG HERE                ║
+// ╚══════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyDN5wH-7QjCTjONZQbUwb4jSHIxEWsz2eI",
+  authDomain: "gippy-d99bd.firebaseapp.com",
+  projectId: "gippy-d99bd",
+  storageBucket: "gippy-d99bd.firebasestorage.app",
+  messagingSenderId: "29539003996",
+  appId: "1:29539003996:web:a53d4ca534fa4b26100099",
+  measurementId: "G-16F88BTPV4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Device ID
+let deviceId = localStorage.getItem('gippy_device_id');
+if (!deviceId) {
+  deviceId = 'GID-' + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  localStorage.setItem('gippy_device_id', deviceId);
+}
+document.getElementById('device-badge').textContent = deviceId;
+
+// Check existing request status on load
+async function checkRequestStatus() {
+  const q = query(collection(db, 'key_requests'), where('deviceId', '==', deviceId));
+  const snap = await getDocs(q);
+  if (snap.empty) return; // no request — show form
+
+  const doc = snap.docs[0];
+  const data = doc.data();
+
+  if (data.status === 'pending') {
+    document.getElementById('req-form-wrap').style.display = 'none';
+    document.getElementById('req-pending').classList.add('visible');
+    // Listen for approval
+    listenForApproval(doc.id);
+  } else if (data.status === 'approved') {
+    showApprovedKey(data);
+  }
+}
+
+function listenForApproval(docId) {
+  const { doc: fsDoc } = window._fsUtils;
+  onSnapshot(fsDoc(db, 'key_requests', docId), (snap) => {
+    const data = snap.data();
+    if (data.status === 'approved') {
+      document.getElementById('req-pending').classList.remove('visible');
+      showApprovedKey(data);
+    }
+  });
+}
+
+function showApprovedKey(data) {
+  document.getElementById('req-form-wrap').style.display = 'none';
+  document.getElementById('req-pending').classList.remove('visible');
+  const card = document.getElementById('key-approved-card');
+  card.classList.add('visible');
+  document.getElementById('approved-key-text').textContent = data.key || 'Key not set yet';
+  if (data.expiresAt) {
+    const d = new Date(data.expiresAt.seconds * 1000);
+    document.getElementById('approved-key-expiry').textContent = d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  } else {
+    document.getElementById('approved-key-expiry').textContent = 'No expiry set';
+  }
+  window._approvedKey = data.key;
+}
+
+window._fsUtils = { doc: (await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')).doc };
+
+window.submitRequest = async () => {
+  const name = document.getElementById('req-name').value.trim();
+  const email = document.getElementById('req-email').value.trim();
+  const reason = document.getElementById('req-reason').value.trim();
+  if (!name || !email || !reason) { showToast('Please fill in all fields.'); return; }
+  const btn = document.getElementById('req-submit-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    // Check if already submitted
+    const q = query(collection(db, 'key_requests'), where('deviceId', '==', deviceId));
+    const existing = await getDocs(q);
+    if (!existing.empty) {
+      showToast('You already submitted a request.');
+      btn.disabled = false; btn.textContent = 'Submit Request';
+      return;
+    }
+    const ref = await addDoc(collection(db, 'key_requests'), {
+      name, email, reason, deviceId,
+      status: 'pending',
+      createdAt: serverTimestamp()
+    });
+    document.getElementById('req-success').classList.add('visible');
+    document.getElementById('req-name').value = '';
+    document.getElementById('req-email').value = '';
+    document.getElementById('req-reason').value = '';
+    btn.textContent = 'Sent!';
+    setTimeout(() => {
+      document.getElementById('req-form-wrap').style.display = 'none';
+      document.getElementById('req-pending').classList.add('visible');
+      listenForApproval(ref.id);
+    }, 1500);
+  } catch (e) {
+    console.error(e);
+    showToast('Error submitting. Check Firebase config.');
+    btn.disabled = false; btn.textContent = 'Submit Request';
+  }
+};
+
+window.copyApprovedKey = () => {
+  navigator.clipboard.writeText(window._approvedKey || '');
+  showToast('Key copied!');
+};
+
+checkRequestStatus();
+</script>
+
 <script>
-// ── Config — update these ────────────────────────────────────────
-const API_URL = 'http://localhost:8080/api/chat';  // your server.py URL
-const REQUEST_URL = 'http://localhost:8080/request-key'; // your server.py request endpoint
-// ─────────────────────────────────────────────────────────────────
+const API_URL = 'https://qstar.my/api/chat';
 
 let sessions = JSON.parse(localStorage.getItem('gippy_sessions') || '[]');
 let currentSession = null;
 let abortController = null;
 let isStreaming = false;
-let apiKey = localStorage.getItem('gippy_user_key') || '';
+let lastKnownUrl = localStorage.getItem('gippy_last_url') || '';
 
-// ── Live URL + how to use ────────────────────────────────────────
+// ── Endpoint change notification ─────────────────────────────────
+function dismissEndpointNotif() {
+  document.getElementById('endpoint-notif').classList.remove('visible');
+  localStorage.setItem('gippy_last_url', document.getElementById('live-url').textContent);
+}
+
+// ── Live URL ─────────────────────────────────────────────────────
 async function loadLiveUrl() {
   try {
-    const res = await fetch('http://localhost:8080/tunnel-url');
+    const res = await fetch('https://qstar.my/tunnel-url');
     const data = await res.json();
     const url = data.url;
-    document.getElementById('live-url').textContent = url + '/api/chat';
+    const endpoint = url + '/api/chat';
+    document.getElementById('live-url').textContent = endpoint;
+
+    // Check if URL changed
+    if (lastKnownUrl && lastKnownUrl !== endpoint) {
+      document.getElementById('endpoint-notif-text').textContent = `Endpoint changed to: ${endpoint}`;
+      document.getElementById('endpoint-notif').classList.add('visible');
+    }
+    lastKnownUrl = endpoint;
+
     document.getElementById('code-python').textContent =
 `import requests
 
-response = requests.post(
-    "${url}/api/chat",
-    headers={
-        "Content-Type": "application/json",
-        "x-api-key": "YOUR_API_KEY"
-    },
-    json={
-        "model": "gemma2:2b",
-        "messages": [{"role": "user", "content": "Hello!"}],
-        "stream": False
-    }
-)
-print(response.json()["message"]["content"])`;
+URL = "${url}/api/chat"
+API_KEY = "YOUR_API_KEY"
+history = []
+
+print("Gippy Chat — type 'quit' to exit")
+while True:
+    user = input("You: ").strip()
+    if user.lower() == "quit":
+        break
+    history.append({"role": "user", "content": user})
+    r = requests.post(URL,
+        headers={"Content-Type": "application/json", "x-api-key": API_KEY},
+        json={"model": "gemma2:2b", "messages": history, "stream": False}
+    )
+    if r.ok:
+        reply = r.json()["message"]["content"]
+        history.append({"role": "assistant", "content": reply})
+        print(f"Gippy: {reply}")
+    else:
+        print(f"Error: {r.status_code}")`;
 
     document.getElementById('code-discord').textContent =
 `import discord, requests
@@ -322,10 +565,7 @@ client.run("YOUR_BOT_TOKEN")`;
     document.getElementById('code-js').textContent =
 `const res = await fetch("${url}/api/chat", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "x-api-key": "YOUR_API_KEY"
-  },
+  headers: { "Content-Type": "application/json", "x-api-key": "YOUR_KEY" },
   body: JSON.stringify({
     model: "gemma2:2b",
     messages: [{ role: "user", content: "Hello!" }],
@@ -343,42 +583,9 @@ console.log(data.message.content);`;
   }
 }
 
-function copyUrl() {
-  const url = document.getElementById('live-url').textContent;
-  navigator.clipboard.writeText(url);
-  showToast('Copied!');
-}
+function copyUrl() { navigator.clipboard.writeText(document.getElementById('live-url').textContent); showToast('Copied!'); }
 
-async function submitRequest() {
-  const name = document.getElementById('req-name').value.trim();
-  const email = document.getElementById('req-email').value.trim();
-  const reason = document.getElementById('req-reason').value.trim();
-  if (!name || !email || !reason) { showToast('Please fill in all fields.'); return; }
-  const btn = document.getElementById('req-submit-btn');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  try {
-    const res = await fetch(REQUEST_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, reason })
-    });
-    if (res.ok) {
-      document.getElementById('req-success').classList.add('visible');
-      document.getElementById('req-name').value = '';
-      document.getElementById('req-email').value = '';
-      document.getElementById('req-reason').value = '';
-      btn.textContent = 'Sent!';
-    } else {
-      showToast('Error sending request. Try again.');
-      btn.disabled = false; btn.textContent = 'Submit Request';
-    }
-  } catch {
-    showToast('Could not reach server.');
-    btn.disabled = false; btn.textContent = 'Submit Request';
-  }
-}
-
-// ── Tab switching ────────────────────────────────────────────────
+// ── Tab switching ─────────────────────────────────────────────────
 function switchTab(tab) {
   document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
   document.getElementById('tab-apikeys').classList.toggle('visible', tab === 'apikeys');
@@ -387,22 +594,59 @@ function switchTab(tab) {
   if (tab === 'apikeys') loadLiveUrl();
 }
 
+// ── Mobile nav ────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
+
+function mobileNav(tab) {
+  if (tab === 'history') {
+    // Open sidebar as overlay
+    document.getElementById('sidebar').classList.add('mobile-open');
+    document.getElementById('sidebar-overlay').classList.add('visible');
+    switchTab('chat');
+  } else if (tab === 'chat') {
+    closeMobileSidebar();
+    switchTab('chat');
+  } else if (tab === 'apikeys') {
+    document.getElementById('sidebar').classList.add('mobile-open');
+    document.getElementById('sidebar-overlay').classList.add('visible');
+    switchTab('apikeys');
+  }
+  // Update active state
+  ['chat','history','api'].forEach(t => {
+    const btn = document.getElementById(`mnav-${t === 'api' ? 'api' : t}`);
+    if (btn) btn.classList.remove('active');
+  });
+  const map = { chat: 'mnav-chat', history: 'mnav-history', apikeys: 'mnav-api' };
+  if (map[tab]) document.getElementById(map[tab])?.classList.add('active');
+}
+
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('collapsed');
-  document.getElementById('main').classList.toggle('expanded');
+  if (isMobile()) {
+    const sb = document.getElementById('sidebar');
+    if (sb.classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    } else {
+      sb.classList.add('mobile-open');
+      document.getElementById('sidebar-overlay').classList.add('visible');
+    }
+  } else {
+    const sb = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    const notif = document.getElementById('endpoint-notif');
+    sb.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+    notif.classList.toggle('sidebar-collapsed', sb.classList.contains('collapsed'));
+  }
 }
 
 const modelSelect = document.getElementById('model-select');
 
-async function checkStatus() {
-  const dot = document.getElementById('status-dot'), txt = document.getElementById('status-text');
-  try {
-    const r = await fetch('http://localhost:11434/', { signal: AbortSignal.timeout(3000) });
-    if (r.ok || r.status === 404) { dot.className = 'dot online'; txt.textContent = 'Online'; }
-    else throw new Error();
-  } catch { dot.className = 'dot error'; txt.textContent = 'Offline'; }
-}
-checkStatus(); setInterval(checkStatus, 15000);
+
 
 function newChat() {
   currentSession = { id: Date.now(), title: 'New Chat', messages: [] };
@@ -416,10 +660,10 @@ function loadSession(id) {
   renderMessages();
   document.getElementById('topbar-title').textContent = currentSession.title;
   renderHistory();
+  if (isMobile()) closeMobileSidebar();
 }
 function deleteSession(id, e) {
-  e.stopPropagation();
-  sessions = sessions.filter(s => s.id !== id);
+  e.stopPropagation(); sessions = sessions.filter(s => s.id !== id);
   if (currentSession && currentSession.id === id) {
     currentSession = sessions[0] || null;
     if (currentSession) { renderMessages(); document.getElementById('topbar-title').textContent = currentSession.title; }
@@ -427,23 +671,15 @@ function deleteSession(id, e) {
   }
   saveSessions(); renderHistory();
 }
-function saveSessions() {
-  try { localStorage.setItem('gippy_sessions', JSON.stringify(sessions.slice(0,40).map(s => ({...s, messages: s.messages.slice(-40)})))); } catch {}
-}
+function saveSessions() { try { localStorage.setItem('gippy_sessions', JSON.stringify(sessions.slice(0,40).map(s=>({...s,messages:s.messages.slice(-40)})))); } catch {} }
 function renderHistory() {
   const c = document.getElementById('chat-history');
   const items = sessions.slice(0,30).map(s => {
     const a = currentSession && s.id === currentSession.id ? 'active' : '';
-    return `<div class="history-item ${a}">
-      <span class="history-item-title" onclick="loadSession(${s.id})">${esc(s.title)}</span>
-      <button class="delete-chat-btn" onclick="deleteSession(${s.id},event)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>`;
+    return `<div class="history-item ${a}"><span class="history-item-title" onclick="loadSession(${s.id})">${esc(s.title)}</span><button class="delete-chat-btn" onclick="deleteSession(${s.id},event)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`;
   }).join('');
-  c.innerHTML = `<div class="history-label">Recent</div>${items || '<div style="font-size:11px;color:var(--text-dim);padding:8px 8px">No chats yet</div>'}`;
+  c.innerHTML = `<div class="history-label">Recent</div>${items||'<div style="font-size:11px;color:var(--text-dim);padding:8px 8px">No chats yet</div>'}`;
 }
-
 function renderMessages() {
   const msgs = document.getElementById('messages');
   if (!currentSession || !currentSession.messages.length) { msgs.innerHTML = welcomeHTML(); return; }
@@ -451,146 +687,85 @@ function renderMessages() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 function welcomeHTML() {
-  return `<div id="welcome">
-    <div class="welcome-logo"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div>
-    <div class="welcome-title">Hey, I'm Gippy.</div>
-    <div class="welcome-sub">Your personal AI assistant. Ask me anything.</div>
-    <div class="starter-grid">
-      <div class="starter-card" onclick="sendStarter(this)"><strong>Write something</strong>Draft an email to my team about our upcoming launch</div>
-      <div class="starter-card" onclick="sendStarter(this)"><strong>Explain a concept</strong>Explain how neural networks learn in simple terms</div>
-      <div class="starter-card" onclick="sendStarter(this)"><strong>Code help</strong>Write a Python function to parse JSON from a URL</div>
-      <div class="starter-card" onclick="sendStarter(this)"><strong>Brainstorm</strong>Give me 10 creative names for a tech startup</div>
-    </div>
-  </div>`;
+  return `<div id="welcome"><div class="welcome-logo"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="welcome-title">Hey, I'm Gippy.</div><div class="welcome-sub">Your personal AI assistant. Ask me anything.</div><div class="starter-grid"><div class="starter-card" onclick="sendStarter(this)"><strong>Write something</strong>Draft an email to my team about our upcoming launch</div><div class="starter-card" onclick="sendStarter(this)"><strong>Explain a concept</strong>Explain how neural networks learn in simple terms</div><div class="starter-card" onclick="sendStarter(this)"><strong>Code help</strong>Write a Python function to parse JSON from a URL</div><div class="starter-card" onclick="sendStarter(this)"><strong>Brainstorm</strong>Give me 10 creative names for a tech startup</div></div></div>`;
 }
 function messageHTML(role, content) {
-  const rowCls = role === 'user' ? 'message-row user-row' : 'message-row';
-  const av = role === 'user'
-    ? `<div class="avatar user">U</div>`
-    : `<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div>`;
+  const rowCls = role==='user'?'message-row user-row':'message-row';
+  const av = role==='user'?`<div class="avatar user">U</div>`:`<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div>`;
   return `<div class="${rowCls}">${av}<div class="bubble ${role==='user'?'user':'ai'}">${fmt(content)}</div></div>`;
 }
 function fmt(text) {
-  text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_,l,c) => `<pre><code>${esc(c.trim())}</code></pre>`);
-  text = text.replace(/`([^`]+)`/g, (_,c) => `<code>${esc(c)}</code>`);
-  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  text = text.replace(/\n/g, '<br>');
+  text=text.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>`<pre><code>${esc(c.trim())}</code></pre>`);
+  text=text.replace(/`([^`]+)`/g,(_,c)=>`<code>${esc(c)}</code>`);
+  text=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  text=text.replace(/\*(.*?)\*/g,'<em>$1</em>');
+  text=text.replace(/\n/g,'<br>');
   return text;
 }
-function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showTyping(){const msgs=document.getElementById('messages');const el=document.createElement('div');el.className='message-row typing-row';el.id='typing-indicator';el.innerHTML=`<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="bubble ai"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;msgs.appendChild(el);msgs.scrollTop=msgs.scrollHeight;}
+function removeTyping(){document.getElementById('typing-indicator')?.remove();}
 
-function showTyping() {
-  const msgs = document.getElementById('messages');
-  const el = document.createElement('div');
-  el.className = 'message-row typing-row'; el.id = 'typing-indicator';
-  el.innerHTML = `<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="bubble ai"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
-  msgs.appendChild(el); msgs.scrollTop = msgs.scrollHeight;
-}
-function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
-
-const SPAM_THRESHOLD = 3, TIMEOUT_MS = 60000;
-function getSpam() { try { return JSON.parse(localStorage.getItem('gippy_spam')||'{}'); } catch { return {}; } }
-function saveSpam(s) { try { localStorage.setItem('gippy_spam', JSON.stringify(s)); } catch {} }
-function isTimedOut() { const s=getSpam(); return (s.until&&Date.now()<s.until) ? s.until : false; }
-function checkSpam(text) {
-  const s=getSpam(), n=text.trim().toLowerCase();
-  s.last===n ? s.count=(s.count||1)+1 : (s.last=n, s.count=1);
-  if (s.count>=SPAM_THRESHOLD) { s.until=Date.now()+TIMEOUT_MS; s.count=0; saveSpam(s); return true; }
-  saveSpam(s); return false;
-}
+const SPAM_THRESHOLD=3,TIMEOUT_MS=60000;
+function getSpam(){try{return JSON.parse(localStorage.getItem('gippy_spam')||'{}');}catch{return{};}}
+function saveSpam(s){try{localStorage.setItem('gippy_spam',JSON.stringify(s));}catch{}}
+function isTimedOut(){const s=getSpam();return(s.until&&Date.now()<s.until)?s.until:false;}
+function checkSpam(text){const s=getSpam(),n=text.trim().toLowerCase();s.last===n?s.count=(s.count||1)+1:(s.last=n,s.count=1);if(s.count>=SPAM_THRESHOLD){s.until=Date.now()+TIMEOUT_MS;s.count=0;saveSpam(s);return true;}saveSpam(s);return false;}
 let cdInterval=null;
-function showTimeoutBanner(until) {
-  if(cdInterval) clearInterval(cdInterval);
-  const b=document.getElementById('error-banner');
-  function upd(){
-    const rem=Math.ceil((until-Date.now())/1000);
-    if(rem<=0){clearInterval(cdInterval);b.classList.remove('visible');document.getElementById('send-btn').disabled=false;document.getElementById('user-input').disabled=false;return;}
-    b.textContent=`Slow down! Same message sent too many times. Wait ${rem}s.`;
-    b.classList.add('visible');
-    document.getElementById('send-btn').disabled=true;
-    document.getElementById('user-input').disabled=true;
-  }
-  upd(); cdInterval=setInterval(upd,1000);
-}
-(function(){ const u=isTimedOut(); if(u) showTimeoutBanner(u); })();
+function showTimeoutBanner(until){if(cdInterval)clearInterval(cdInterval);const b=document.getElementById('error-banner');function upd(){const rem=Math.ceil((until-Date.now())/1000);if(rem<=0){clearInterval(cdInterval);b.classList.remove('visible');document.getElementById('send-btn').disabled=false;document.getElementById('user-input').disabled=false;return;}b.textContent=`Slow down! Same message sent too many times. Wait ${rem}s.`;b.classList.add('visible');document.getElementById('send-btn').disabled=true;document.getElementById('user-input').disabled=true;}upd();cdInterval=setInterval(upd,1000);}
+(function(){const u=isTimedOut();if(u)showTimeoutBanner(u);})();
 
-function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function sendStarter(el){const text=el.querySelector('strong').nextSibling?.textContent?.trim()||el.textContent.replace(el.querySelector('strong').textContent,'').trim();document.getElementById('user-input').value=text;sendMessage();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,200)+'px';}
+function setError(msg){const b=document.getElementById('error-banner');msg?(b.textContent=msg,b.classList.add('visible')):b.classList.remove('visible');}
+function setStreaming(v){isStreaming=v;document.getElementById('send-btn').disabled=v;document.getElementById('stop-btn').classList.toggle('visible',v);}
+function stopGeneration(){abortController?.abort();}
+function getHeaders(){return{'Content-Type':'application/json'};}
 
-function sendStarter(el) {
-  const text = el.querySelector('strong').nextSibling?.textContent?.trim()||el.textContent.replace(el.querySelector('strong').textContent,'').trim();
-  document.getElementById('user-input').value = text; sendMessage();
-}
-function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
-function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,200)+'px'; }
-function setError(msg) { const b=document.getElementById('error-banner'); msg?(b.textContent=msg,b.classList.add('visible')):b.classList.remove('visible'); }
-function setStreaming(v) { isStreaming=v; document.getElementById('send-btn').disabled=v; document.getElementById('stop-btn').classList.toggle('visible',v); }
-function stopGeneration() { abortController?.abort(); }
-
-function getHeaders() {
-  const h = { 'Content-Type': 'application/json' };
-  if (apiKey) h['x-api-key'] = apiKey;
-  return h;
-}
-
-function sendFriendlyMode() {
-  if(isStreaming) return;
+function sendFriendlyMode(){
+  if(isStreaming)return;
   if(!currentSession){currentSession={id:Date.now(),title:'New Chat',messages:[]};sessions.unshift(currentSession);}
   currentSession.messages.push({role:'user',content:'be friendly'});
-  saveSessions(); renderHistory(); showTyping(); setStreaming(true);
+  saveSessions();renderHistory();showTyping();setStreaming(true);
   abortController=new AbortController();
   fetch(API_URL,{method:'POST',headers:getHeaders(),signal:abortController.signal,body:JSON.stringify({model:modelSelect.value,messages:currentSession.messages,stream:true})})
-  .then(async r=>{
-    if(!r.ok) throw new Error();
-    removeTyping();
-    const aiMsg={role:'assistant',content:''}; currentSession.messages.push(aiMsg);
-    const msgs=document.getElementById('messages');
-    if(msgs.querySelector('#welcome')) msgs.innerHTML='';
-    const row=document.createElement('div'); row.className='message-row';
-    row.innerHTML=`<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="bubble ai" id="streaming-bubble"></div>`;
-    msgs.appendChild(row);
-    const bubble=document.getElementById('streaming-bubble');
-    const reader=r.body.getReader(), dec=new TextDecoder();
-    while(true){const{done,value}=await reader.read();if(done)break;dec.decode(value,{stream:true}).split('\n').filter(l=>l.trim()).forEach(l=>{try{const j=JSON.parse(l);aiMsg.content+=j?.message?.content||'';bubble.innerHTML=fmt(aiMsg.content);msgs.scrollTop=msgs.scrollHeight;}catch{}});}
-    row.id=''; saveSessions();
-  }).catch(e=>{removeTyping();if(e.name!=='AbortError')setError('Could not connect.');})
+  .then(async r=>{if(!r.ok)throw new Error();removeTyping();const aiMsg={role:'assistant',content:''};currentSession.messages.push(aiMsg);const msgs=document.getElementById('messages');if(msgs.querySelector('#welcome'))msgs.innerHTML='';const row=document.createElement('div');row.className='message-row';row.innerHTML=`<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="bubble ai" id="streaming-bubble"></div>`;msgs.appendChild(row);const bubble=document.getElementById('streaming-bubble');const reader=r.body.getReader(),dec=new TextDecoder();while(true){const{done,value}=await reader.read();if(done)break;dec.decode(value,{stream:true}).split('\n').filter(l=>l.trim()).forEach(l=>{try{const j=JSON.parse(l);aiMsg.content+=j?.message?.content||'';bubble.innerHTML=fmt(aiMsg.content);msgs.scrollTop=msgs.scrollHeight;}catch{}});}row.id='';saveSessions();})
+  .catch(e=>{removeTyping();if(e.name!=='AbortError')setError('Could not connect.');})
   .finally(()=>{setStreaming(false);saveSessions();});
 }
 
-async function sendMessage() {
-  if(isStreaming) return;
-  const until=isTimedOut(); if(until){showTimeoutBanner(until);return;}
+async function sendMessage(){
+  if(isStreaming)return;
+  const until=isTimedOut();if(until){showTimeoutBanner(until);return;}
   const input=document.getElementById('user-input');
-  const text=input.value.trim(); if(!text) return;
+  const text=input.value.trim();if(!text)return;
   if(checkSpam(text)){showTimeoutBanner(getSpam().until);return;}
-  setError(''); input.value=''; input.style.height='auto';
+  setError('');input.value='';input.style.height='auto';
   if(!currentSession){currentSession={id:Date.now(),title:text.slice(0,36)||'New Chat',messages:[]};sessions.unshift(currentSession);}
   currentSession.messages.push({role:'user',content:text});
   if(currentSession.title==='New Chat'){currentSession.title=text.slice(0,36)+(text.length>36?'…':'');document.getElementById('topbar-title').textContent=currentSession.title;}
-  renderMessages(); showTyping(); setStreaming(true); saveSessions(); renderHistory();
+  renderMessages();showTyping();setStreaming(true);saveSessions();renderHistory();
   abortController=new AbortController();
-  try {
+  try{
     const res=await fetch(API_URL,{method:'POST',headers:getHeaders(),signal:abortController.signal,body:JSON.stringify({model:modelSelect.value,messages:currentSession.messages.map(m=>({role:m.role,content:m.content})),stream:true})});
     if(!res.ok){const e=await res.text();throw new Error(`Error ${res.status}: ${e}`);}
     removeTyping();
-    const aiMsg={role:'assistant',content:''}; currentSession.messages.push(aiMsg);
+    const aiMsg={role:'assistant',content:''};currentSession.messages.push(aiMsg);
     const msgs=document.getElementById('messages');
-    const row=document.createElement('div'); row.className='message-row'; row.id='streaming-row';
+    const row=document.createElement('div');row.className='message-row';row.id='streaming-row';
     row.innerHTML=`<div class="avatar ai"><img src="https://i.imgur.com/g5MJMBu.png" alt="Gippy"></div><div class="bubble ai" id="streaming-bubble"></div>`;
     msgs.appendChild(row);
     const bubble=document.getElementById('streaming-bubble');
-    const reader=res.body.getReader(), dec=new TextDecoder();
+    const reader=res.body.getReader(),dec=new TextDecoder();
     while(true){const{done,value}=await reader.read();if(done)break;dec.decode(value,{stream:true}).split('\n').filter(l=>l.trim()).forEach(l=>{try{const j=JSON.parse(l);aiMsg.content+=j?.message?.content||'';bubble.innerHTML=fmt(aiMsg.content);msgs.scrollTop=msgs.scrollHeight;}catch{}});}
-    row.id=''; saveSessions();
-  } catch(e) {
+    row.id='';saveSessions();
+  }catch(e){
     removeTyping();
     if(e.name==='AbortError'){if(currentSession.messages.at(-1)?.role==='assistant')currentSession.messages.at(-1).content+=' [stopped]';renderMessages();}
-    else{currentSession.messages.pop();renderMessages();let m='Could not connect to the AI. Please try again.';if(e.message.includes('403'))m='Invalid API key.';else if(e.message.includes('404'))m=`Model "${modelSelect.value}" not found.`;setError(m);}
-  } finally { setStreaming(false); saveSessions(); }
+    else{currentSession.messages.pop();renderMessages();let m='Could not connect to the AI. Please try again.';if(e.message.includes('404'))m=`Model "${modelSelect.value}" not found.`;setError(m);}
+  }finally{setStreaming(false);saveSessions();}
 }
 
 renderHistory();
